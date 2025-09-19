@@ -14,7 +14,7 @@ const MyLibrary = ({ library, onRemoveFromLibrary }: MyLibraryProps) => {
         return library.filter(book => book.status === status);
     };
 
-    const otherStatuses: ReadingStatus[] = ["LENDO", "QUERO_LER", "LIDO", "PAUSADO"];
+    const otherStatuses: ReadingStatus[] = ["LENDO", "QUERO_LER", "LIDO", "PAUSADO", "ABANDONADO"];
   
     const allTabs = ["TODOS", ...otherStatuses] as const;
 
@@ -27,7 +27,7 @@ const MyLibrary = ({ library, onRemoveFromLibrary }: MyLibraryProps) => {
         <div className="mt-12">
             <h2 className="text-3xl font-bold text-foreground mb-6">Minha Biblioteca</h2>
             <Tabs defaultValue="TODOS"> 
-                <TabsList className="grid w-full grid-cols-3 md:grid-cols-5">
+                <TabsList className="grid w-full grid-cols-3 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-6 xl:grid-cols-6">
                     {allTabs.map(tab => (
                         <TabsTrigger key={tab} value={tab}>{formatTabTitle(tab)}</TabsTrigger>
                     ))}

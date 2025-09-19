@@ -14,7 +14,8 @@ const statusColorMap: Record<ReadingStatus, string> = {
     "QUERO_LER": "bg-chart-1", 
     "LIDO": "bg-chart-2",   
     "LENDO": "bg-chart-3", 
-    "PAUSADO": "bg-chart-4",   
+    "PAUSADO": "bg-chart-4",  
+    "ABANDONADO": "bg-chart-5", 
 };
 
 const genreColorMap: Record<string, string> = {

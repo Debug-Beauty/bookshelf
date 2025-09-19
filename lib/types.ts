@@ -1,4 +1,4 @@
-export type ReadingStatus = "QUERO_LER" | "LENDO" | "LIDO" | "PAUSADO" ;
+export type ReadingStatus = "QUERO_LER" | "LENDO" | "LIDO" | "PAUSADO" | "ABANDONADO";
 
 export interface Book {
   id: string;

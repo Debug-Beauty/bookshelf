@@ -217,7 +217,7 @@ export const initialBooks: Book[] = [
         rating: 4,
         synopsis: "Tratado clássico sobre a aquisição e manutenção do poder político.",
         cover: COVER_PATH("o_principe.jpg"),
-        status: "PAUSADO",
+        status: "ABANDONADO",
     },
     {
         id: "9788525064562",
