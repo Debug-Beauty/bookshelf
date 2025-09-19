@@ -1,103 +1,108 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import BookCard from './components/BookCard';
+import ReadingGoal from './components/ReadingGoal';
+import MyLibrary from './components/MyLibrary';
+import DashboardStats from './components/DashboardStats';
+import { Book, ReadingStatus } from '@/lib/types';
+import { initialBooks } from '@/lib/data';
+
+const HomePage = () => {
+  const [searchResults, setSearchResults] = useState<Book[]>([]);
+  const [myLibrary, setMyLibrary] = useState<Book[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    try {
+     
+      localStorage.removeItem('myBookLibrary');
+
+      const savedLibrary = localStorage.getItem('myBookLibrary');
+      if (savedLibrary && savedLibrary !== 'undefined') {
+        const parsedLibrary = JSON.parse(savedLibrary);
+        if (Array.isArray(parsedLibrary) && parsedLibrary.length > 0) {
+          setMyLibrary(parsedLibrary);
+          return;
+        }
+      }
+      setMyLibrary(initialBooks);
+    } catch (error) {
+      console.error("Não foi possível carregar a biblioteca do localStorage", error);
+      setMyLibrary(initialBooks);
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      if (myLibrary.length > 0) {
+        localStorage.setItem('myBookLibrary', JSON.stringify(myLibrary));
+      }
+    } catch (error) {
+      console.error("Não foi possível salvar a biblioteca no localStorage", error);
+    }
+  }, [myLibrary]);
+
+  const handleSearch = async (query: string) => {
+    if (!query) {
+      setSearchResults([]);
+      return;
+    }
+    setIsLoading(true);
+    setSearchResults([]);
+    try {
+      const response = await fetch(`/api/books?query=${encodeURIComponent(query)}`);
+      if (!response.ok) throw new Error('Falha na busca');
+      const data: Book[] = await response.json();
+      setSearchResults(data);
+    } catch (error) {
+      console.error("Erro na busca:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const addToLibrary = (bookToAdd: Book, status: ReadingStatus) => {
+    if (myLibrary.some(book => book.id === bookToAdd.id)) {
+      alert("Este livro já está na sua biblioteca!");
+      return;
+    }
+    const newLibraryBook: Book = { ...bookToAdd, status };
+    setMyLibrary(prevLibrary => [...prevLibrary, newLibraryBook]);
+    alert(`"${bookToAdd.title}" adicionado à sua biblioteca!`);
+    setSearchResults([]);
+  };
+
+  const handleRemoveFromLibrary = (bookId: string) => {
+    setMyLibrary(prevLibrary => prevLibrary.filter(book => book.id !== bookId));
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="container mx-auto px-6 py-8">
+      <DashboardStats library={myLibrary} />
+      <ReadingGoal library={myLibrary} />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {searchResults.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-3xl font-bold text-foreground my-6">Resultados da Busca</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            {searchResults.map((book) => (
+              <BookCard
+                key={book.id}
+                book={book}
+                isInLibrary={false}               
+              />
+            ))}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
+
+      <MyLibrary
+        library={myLibrary}
+        onRemoveFromLibrary={handleRemoveFromLibrary}
+      />
     </div>
   );
-}
+};
+
+export default HomePage;
