@@ -75,7 +75,7 @@ const MyLibrary = ({ library, onRemoveFromLibrary }: MyLibraryProps) => {
                         <TabsTrigger key={tab} value={tab}>{formatTabTitle(tab)}</TabsTrigger>
                     ))}
                 </TabsList>
-                
+
                 <TabsContent key="TODOS" value="TODOS">
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-6">
                         {allFilteredBooks.map(book => (
@@ -106,6 +106,7 @@ const MyLibrary = ({ library, onRemoveFromLibrary }: MyLibraryProps) => {
                                     />
                                 ))}
                             </div>
+                            
                             {booksForStatus.length === 0 && (
                                 <p className="text-center text-muted-foreground mt-6">Nenhum livro com este estado e filtros.</p>
                             )}
