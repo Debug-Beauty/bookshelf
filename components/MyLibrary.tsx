@@ -1,9 +1,9 @@
 "use client";
 
 import { useMemo } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
-import { Input } from "../../components/ui/input";
-import { Book, ReadingStatus, READING_STATUS } from "../../lib/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Input } from "../components/ui/input";
+import { Book, ReadingStatus, READING_STATUS } from "../lib/types";
 import BookCard from "./BookCard";
 
 interface MyLibraryProps {

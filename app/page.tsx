@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from 'react';
-import ReadingGoal from './components/ReadingGoal';
-import MyLibrary from './components/MyLibrary';
-import DashboardStats from './components/DashboardStats';
-import AddBookModal from './components/AddBookModal';
-import { SelectBookModal } from './components/SelectBookModal';
+import ReadingGoal from '../components/ReadingGoal';
+import MyLibrary from '../components/MyLibrary';
+import DashboardStats from '../components/DashboardStats';
+import AddBookModal from '../components/AddBookModal';
+import { SelectBookModal } from '../components/SelectBookModal';
 import { Button } from '../components/ui/button';
 import { Book, ReadingStatus, READING_STATUS } from '../lib/types';
 import { initialBooks } from '../lib/data';
