@@ -5,7 +5,7 @@ import { BookCheck, BookOpen, FileDigit } from "lucide-react";
 import React from "react";
 import { Book, READING_STATUS } from "@/lib/types";
 import { Book as BookIcon } from "lucide-react";
-
+import QuickNav from './QuickNav'; 
 interface DashboardStatsProps {
     library: Book[];
 }
@@ -56,6 +56,7 @@ const DashboardStats = ({ library }: DashboardStatsProps) => {
                     icon={<FileDigit className="h-4 w-4 text-primary" />}
                 />
             </div>
+            <QuickNav />
         </div>
     );
 };
