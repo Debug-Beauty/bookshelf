@@ -1,4 +1,12 @@
-export type ReadingStatus = "QUERO_LER" | "LENDO" | "LIDO" | "PAUSADO" | "ABANDONADO";
+export const READING_STATUS = {
+  QUERO_LER: "QUERO_LER",
+  LENDO: "LENDO",
+  LIDO: "LIDO",
+  PAUSADO: "PAUSADO",
+  ABANDONADO: "ABANDONADO",
+} as const; 
+
+export type ReadingStatus = (typeof READING_STATUS)[keyof typeof READING_STATUS];
 
 export interface Book {
   id: string;
@@ -12,5 +20,3 @@ export interface Book {
   rating: number;
   status: ReadingStatus;
 }
-
-
