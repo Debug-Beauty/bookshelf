@@ -1,4 +1,3 @@
-// components/ConfirmationModal.tsx
 "use client";
 
 import {

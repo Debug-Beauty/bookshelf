@@ -10,7 +10,7 @@ interface MyLibraryProps {
     library: Book[];
     onRemoveFromLibrary: (bookId: string) => void;
     onUpdateBookStatus: (bookId: string, newStatus: ReadingStatus) => void;
-    onBookUpdate: (updatedBook: Book) => void; // 1. Adicionar a nova prop aqui
+    onBookUpdate: (updatedBook: Book) => void;
     searchTerm: string;
     setSearchTerm: (term: string) => void;
     selectedGenre: string;
@@ -21,16 +21,16 @@ const BookGrid = ({ books, onRemoveFromLibrary, onUpdateBookStatus, onBookUpdate
     books: Book[], 
     onRemoveFromLibrary: (bookId: string) => void,
     onUpdateBookStatus: (bookId: string, newStatus: ReadingStatus) => void,
-    onBookUpdate: (updatedBook: Book) => void; // 2. E aqui também
+    onBookUpdate: (updatedBook: Book) => void;
 }) => (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
         {books.map(book => (
             <BookCard
                 key={book.id}
                 book={book}
                 onRemoveFromLibrary={onRemoveFromLibrary}
                 onUpdateBookStatus={onUpdateBookStatus}
-                onBookUpdate={onBookUpdate} // 3. Passar a prop para o BookCard
+                onBookUpdate={onBookUpdate}
             />
         ))}
     </div>
@@ -40,7 +40,7 @@ const MyLibrary = ({
     library, 
     onRemoveFromLibrary, 
     onUpdateBookStatus,
-    onBookUpdate, // 4. Receber a prop aqui
+    onBookUpdate,
     searchTerm, 
     setSearchTerm, 
     selectedGenre, 
@@ -77,7 +77,7 @@ const MyLibrary = ({
     };
 
     return (
-        <div className="mt-12">
+        <div id="library" className="mt-12">
             <h2 className="text-3xl font-bold text-primary mb-6">Minha Biblioteca</h2>
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <Input type="text" placeholder="Buscar por título ou autor..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="flex-grow" />
@@ -98,7 +98,7 @@ const MyLibrary = ({
                                 books={booksForTab} 
                                 onRemoveFromLibrary={onRemoveFromLibrary} 
                                 onUpdateBookStatus={onUpdateBookStatus} 
-                                onBookUpdate={onBookUpdate} // 5. E finalmente passar para o BookGrid
+                                onBookUpdate={onBookUpdate}
                             />
                             {booksForTab.length === 0 && (<p className="text-center text-muted-foreground mt-10">Nenhum livro encontrado com esses filtros.</p>)}
                         </TabsContent>

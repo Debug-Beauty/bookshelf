@@ -1,4 +1,3 @@
-// components/EditBookModal.tsx
 "use client";
 
 import { useState, useEffect } from 'react';

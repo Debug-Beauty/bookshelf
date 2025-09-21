@@ -55,7 +55,7 @@ const AddBookModal = ({ isOpen, onOpenChange, onBookAdd }: AddBookModalProps) =>
     }
 
     const newBook: Book = {
-      id: crypto.randomUUID(), // ID único e seguro
+      id: crypto.randomUUID(), 
       title,
       author,
       cover: cover || '/fallback.png',

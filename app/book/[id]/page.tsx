@@ -1,10 +1,8 @@
-// app/book/[id]/page.tsx
 "use client";
 
 import { useState, useEffect } from 'react';
-// 1. Importar useParams
 import { useParams, useRouter } from 'next/navigation';
-import { Book, ReadingStatus } from '@/lib/types';
+import { Book } from '@/lib/types';
 import { initialBooks } from '@/lib/data';
 import Image from 'next/image';
 import { Badge } from '@/components/ui/badge';
@@ -13,18 +11,18 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Edit } from 'lucide-react';
 import EditBookModal from '@/components/EditBookModal';
 import useLocalStorageState from '@/hooks/useLocalStorageState';
+import Breadcrumbs from '@/components/Breadcrumbs';
 
 const LOCAL_FALLBACK_SRC = '/fallback.png';
 
-const BookDetailPage = () => { // 2. Remover 'params' das props
+const BookDetailPage = () => {
   const router = useRouter();
-  const params = useParams(); // 3. Usar o hook para obter os parâmetros
+  const params = useParams();
   const [myLibrary, setMyLibrary] = useLocalStorageState<Book[]>('myBookLibrary', initialBooks);
   const [book, setBook] = useState<Book | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   useEffect(() => {
-    // 4. Acessar o id diretamente do objeto 'params' do hook
     const bookId = Array.isArray(params.id) ? params.id[0] : params.id;
     const foundBook = myLibrary.find(b => b.id === bookId);
     if (foundBook) {
@@ -41,6 +39,7 @@ const BookDetailPage = () => { // 2. Remover 'params' das props
   if (!book) {
     return (
       <div className="container mx-auto px-6 py-8 text-center">
+         <Breadcrumbs />
         <h1 className="text-2xl font-bold text-destructive">Carregando livro...</h1>
         <p className="text-muted-foreground">Se o livro não for encontrado, ele pode ter sido removido.</p>
         <Link href="/" passHref>
@@ -71,6 +70,8 @@ const BookDetailPage = () => { // 2. Remover 'params' das props
         bookToEdit={book}
         onBookUpdate={handleBookUpdate}
       />
+      <Breadcrumbs bookTitle={book.title} />
+
       <div className="container mx-auto px-6 py-8">
           <div className="mb-6 flex justify-between items-center">
               <Link href="/" passHref>
@@ -86,7 +87,7 @@ const BookDetailPage = () => { // 2. Remover 'params' das props
           </div>
           <div className="grid md:grid-cols-3 gap-8">
               <div className="md:col-span-1">
-                  <div className="relative w-full h-[450px] shadow-lg rounded-lg overflow-hidden">
+                  <div className="relative w-full aspect-[2/3] shadow-lg rounded-lg overflow-hidden">
                       <Image 
                           src={book.cover} 
                           alt={`Capa de ${book.title}`} 

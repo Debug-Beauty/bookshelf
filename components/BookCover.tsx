@@ -1,4 +1,3 @@
-// components/BookCover.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -14,7 +13,7 @@ interface BookCoverProps {
 const BookCover = ({ src, alt }: BookCoverProps) => {
   const [imgSrc, setImgSrc] = useState(src);
 
-  // Garante que a imagem seja atualizada se a prop 'src' mudar
+  
   useEffect(() => {
     setImgSrc(src);
   }, [src]);
@@ -26,7 +25,7 @@ const BookCover = ({ src, alt }: BookCoverProps) => {
       fill
       style={{ objectFit: 'cover' }}
       className="rounded-lg"
-      // A lógica onError agora está segura dentro de um Client Component
+      
       onError={() => {
         if (imgSrc !== LOCAL_FALLBACK_SRC) {
           setImgSrc(LOCAL_FALLBACK_SRC);

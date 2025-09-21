@@ -36,14 +36,14 @@ const HomePage = () => {
     );
   };
 
-  // 1. Crie a função para atualizar todas as informações de um livro.
+  
   const handleBookUpdate = (updatedBook: Book) => {
     setMyLibrary(prevLibrary =>
       prevLibrary.map(book =>
         book.id === updatedBook.id ? updatedBook : book
       )
     );
-    // O toast de sucesso foi movido para o modal de edição para melhor feedback.
+    
   };
 
   const handleSelectBookToRead = (bookId: string) => {
@@ -70,7 +70,7 @@ const HomePage = () => {
           library={myLibrary}
           onRemoveFromLibrary={handleRemoveFromLibrary}
           onUpdateBookStatus={handleUpdateBookStatus}
-          onBookUpdate={handleBookUpdate} // 2. Passe a função correta aqui
+          onBookUpdate={handleBookUpdate}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           selectedGenre={selectedGenre}
