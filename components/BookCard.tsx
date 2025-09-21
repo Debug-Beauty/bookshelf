@@ -62,22 +62,22 @@ const BookCard = ({ book, onRemoveFromLibrary, onUpdateBookStatus, onBookUpdate 
             {/* 5. Renderizar o modal de edição e passar a função de update */}
             <EditBookModal isOpen={isEditModalOpen} onOpenChange={setIsEditModalOpen} bookToEdit={book} onBookUpdate={onBookUpdate} />
             
-            <Card className="overflow-hidden flex flex-col h-full justify-between">
+            <Card className="overflow-hidden flex flex-col h-full justify-between p-0">
                 <div>
-                    <CardHeader className="p-0 relative h-80 w-full"><Image src={coverSrc} alt={`Capa do livro ${book.title}`} fill priority style={{ objectFit: 'cover' }} onError={handleError} /></CardHeader>
+                    <CardHeader className="p-0 relative h-56 w-full"><Image src={coverSrc} alt={`Capa do livro ${book.title}`} fill priority style={{ objectFit: 'contain' }} onError={handleError} /></CardHeader>
                     <CardContent className="p-4">
                         <div className="flex justify-between items-start mb-2"><Badge className={`${statusClass} text-white`}>{formatStatus(book.status)}</Badge><div className="flex items-center">{renderStars()}</div></div>
-                        <h3 className="text-lg font-bold text-card-foreground line-clamp-2">{book.title}</h3>
-                        <p className="text-sm text-muted-foreground">{book.author} ({book.year})</p>
+                        <h3 className="text-lg font-bold text-card-foreground">{book.title}</h3>
+                        <p className="text-sm text-muted-foreground mt-1 truncate">{book.author} ({book.year})</p>
                         <div className="mt-2 flex flex-wrap gap-2"><Badge className={`${genreClass} text-white`}>{book.genre}</Badge></div>
                     </CardContent>
                 </div>
-                <CardFooter className="p-4 pt-0">
+                <CardFooter className="p-4">
                     <div className="w-full flex items-center gap-2">
-                        <Button asChild variant="outline" size="sm" className='bg-card border-2 border-transparent shadow-sm text-card-foreground'><Link href={`/book/${book.id}`}><Eye className="h-4 w-4" /></Link></Button>
+                        <Button asChild variant="outline" size="sm" className="bg-card border-2 border-transparent shadow-sm text-card-foreground"><Link href={`/book/${book.id}`}><Eye className="h-4 w-4" /></Link></Button>
                         
                         {/* 6. Adicionar o novo botão de Edição */}
-                        <Button variant="outline" size="sm" onClick={() => setIsEditModalOpen(true)} className='bg-card border-2 border-transparent shadow-sm text-card-foreground'>
+                        <Button variant="outline" size="sm" onClick={() => setIsEditModalOpen(true)} className="bg-card border-2 border-transparent shadow-sm text-card-foreground">
                             <Edit className="h-4 w-4" />
                         </Button>
 
