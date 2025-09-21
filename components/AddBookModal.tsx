@@ -1,5 +1,3 @@
-// app/components/AddBookModal.tsx
-
 "use client";
 
 import { useState } from 'react';
@@ -14,7 +12,9 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Book, ReadingStatus } from '@/lib/types';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Book, ReadingStatus, READING_STATUS } from '@/lib/types';
+import { toast } from 'sonner';
 
 interface AddBookModalProps {
   isOpen: boolean;
@@ -29,41 +29,47 @@ const availableGenres = [
     "Mistério", "Política", "Aventura"
 ];
 
-const readingStatuses: ReadingStatus[] = ["QUERO_LER", "LENDO", "LIDO", "PAUSADO", "ABANDONADO"];
+const readingStatuses = Object.values(READING_STATUS);
 
 const AddBookModal = ({ isOpen, onOpenChange, onBookAdd }: AddBookModalProps) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [cover, setCover] = useState('');
-  const [genre, setGenre] = useState(availableGenres[0]);
+  const [genre, setGenre] = useState('');
   const [status, setStatus] = useState<ReadingStatus>('QUERO_LER');
+
+  const resetForm = () => {
+    setTitle('');
+    setAuthor('');
+    setCover('');
+    setGenre('');
+    setStatus('QUERO_LER');
+  };
 
   const handleSubmit = () => {
     if (!title || !author) {
-      alert('Título e Autor são obrigatórios!');
+      toast.error("Erro de Validação", {
+        description: "Os campos Título e Autor são obrigatórios.",
+      });
       return;
     }
 
     const newBook: Book = {
-      id: new Date().toISOString(), // Gerando um ID único simples
+      id: crypto.randomUUID(), // ID único e seguro
       title,
       author,
-      cover: cover || '/covers/fallback.png', // Fallback se a capa não for fornecida
-      genre,
+      cover: cover || '/fallback.png',
+      genre: genre || "Não especificado",
       status,
-      year: new Date().getFullYear(), // Default
-      pages: 0, // Default
-      rating: 0, // Default
-      synopsis: '', // Default
+      year: 0,
+      pages: 0,
+      rating: 0,
+      synopsis: '',     
     };
 
     onBookAdd(newBook);
-    onOpenChange(false); // Fecha o modal
-    
-    // Limpa os campos
-    setTitle('');
-    setAuthor('');
-    setCover('');
+    onOpenChange(false);
+    resetForm();
   };
 
   return (
@@ -86,19 +92,29 @@ const AddBookModal = ({ isOpen, onOpenChange, onBookAdd }: AddBookModalProps) =>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="cover" className="text-right">URL da Capa</Label>
-            <Input id="cover" value={cover} onChange={(e) => setCover(e.target.value)} className="col-span-3" />
+            <Input id="cover" placeholder="https://..." value={cover} onChange={(e) => setCover(e.target.value)} className="col-span-3" />
           </div>
-           <div className="grid grid-cols-4 items-center gap-4">
-             <Label htmlFor="genre" className="text-right">Gênero</Label>
-             <select id="genre" value={genre} onChange={(e) => setGenre(e.target.value)} className="col-span-3 bg-background border border-input rounded-md px-3 py-2 text-sm h-9">
-                 {availableGenres.map(g => <option key={g} value={g}>{g}</option>)}
-             </select>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="genre" className="text-right">Gênero</Label>
+            <Select value={genre} onValueChange={(value) => setGenre(value)}>
+                <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Selecione um gênero" />
+                </SelectTrigger>
+                <SelectContent>
+                    {availableGenres.map(g => <SelectItem key={g} value={g}>{g}</SelectItem>)}
+                </SelectContent>
+            </Select>
           </div>
-           <div className="grid grid-cols-4 items-center gap-4">
-             <Label htmlFor="status" className="text-right">Status</Label>
-             <select id="status" value={status} onChange={(e) => setStatus(e.target.value as ReadingStatus)} className="col-span-3 bg-background border border-input rounded-md px-3 py-2 text-sm h-9">
-                 {readingStatuses.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
-             </select>
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="status" className="text-right">Status</Label>
+            <Select value={status} onValueChange={(value: ReadingStatus) => setStatus(value)}>
+                <SelectTrigger className="col-span-3">
+                    <SelectValue placeholder="Selecione um status" />
+                </SelectTrigger>
+                <SelectContent>
+                    {readingStatuses.map(s => <SelectItem key={s} value={s}>{s.replace('_', ' ')}</SelectItem>)}
+                </SelectContent>
+            </Select>
           </div>
         </div>
         <DialogFooter>

@@ -5,8 +5,18 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'm.media-amazon.com',
-        port: '',
-        pathname: '/images/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.google.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'books.google.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.gstatic.com',
       },
     ],
   },
