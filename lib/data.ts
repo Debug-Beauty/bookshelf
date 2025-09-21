@@ -37,7 +37,7 @@ export const initialBooks: Book[] = [
         rating: 5,
         synopsis: "A história de Bentinho e a suspeita de traição de Capitu.",
         cover: COVER_PATH("dom_casmurro.jpg"),
-        status: "LENDO",
+        status: "QUERO_LER",
     },    
     {
         id: "9780061120084",
@@ -61,7 +61,7 @@ export const initialBooks: Book[] = [
         rating: 4,
         synopsis: "Um homem aceita um emprego de zelador em um hotel isolado e forças malignas afetam sua sanidade.",
         cover: COVER_PATH("o_iluminado.jpg"),
-        status: "LENDO",
+        status: "LIDO",
     },  
     {
         id: "9788532508001",
@@ -157,7 +157,7 @@ export const initialBooks: Book[] = [
         rating: 5,
         synopsis: "Seleção de obras de um dos maiores poetas da língua portuguesa.",
         cover: COVER_PATH("poemas_escolhidos.jpg"),
-        status: "LIDO",
+        status: "QUERO_LER",
     },
     {
         id: "9788580550005",

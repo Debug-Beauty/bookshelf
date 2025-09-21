@@ -5,8 +5,8 @@ import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Book, ReadingStatus } from '@/lib/types';
-import { Pencil, Trash2 } from "lucide-react";
+import { Book, ReadingStatus, READING_STATUS } from '@/lib/types';
+import { Trash2, ChevronRight} from "lucide-react";
 
 const LOCAL_FALLBACK_SRC = '/fallback.png';
 
@@ -19,113 +19,95 @@ const statusColorMap: Record<ReadingStatus, string> = {
 };
 
 const genreColorMap: Record<string, string> = {
-    "Fantasia": "bg-chart-5",
-    "Ficção Científica": "bg-blue-700",
-    "Literatura Brasileira": "bg-teal-700",
-    "Realismo Mágico": "bg-fuchsia-700",
-    "Ficção": "bg-red-700",
-    "Romance": "bg-pink-700",
-    "Biografia": "bg-orange-700",
-    "História": "bg-lime-700",
-    "Psicologia": "bg-emerald-700",
-    "Programação": "bg-gray-700",
-    "Negócios": "bg-amber-700",
-    "Filosofia": "bg-rose-700",
-    "Poesia": "bg-violet-700",
-    "Humor": "bg-sky-700",
-    "Mistério": "bg-slate-700",
-    "Política": "bg-red-900",
+    "Fantasia": "bg-chart-5", "Ficção Científica": "bg-blue-700", "Literatura Brasileira": "bg-teal-700",
+    "Realismo Mágico": "bg-fuchsia-700", "Ficção": "bg-red-700", "Romance": "bg-pink-700",
+    "Biografia": "bg-orange-700", "História": "bg-lime-700", "Psicologia": "bg-emerald-700",
+    "Programação": "bg-gray-700", "Negócios": "bg-amber-700", "Filosofia": "bg-rose-700",
+    "Poesia": "bg-violet-700", "Humor": "bg-sky-700", "Mistério": "bg-slate-700", "Política": "bg-red-900",
 };
-
 
 interface BookCardProps {
     book: Book;
     isInLibrary: boolean;
-    onRemoveFromLibrary?: (bookId: string) => void;
+    onRemoveFromLibrary: (bookId: string) => void;
+    onUpdateBookStatus: (bookId: string, newStatus: ReadingStatus) => void;
 }
 
-const BookCard = ({ book, onRemoveFromLibrary }: BookCardProps) => {
+const BookCard = ({ book, onRemoveFromLibrary, onUpdateBookStatus }: BookCardProps) => {
 
     const formatStatus = (status: string) => {
-        return status.replace('_', ' ').toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+        return status.replace('_', ' ').charAt(0) + status.replace('_', ' ').slice(1).toLowerCase();
     };
 
     const renderStars = () => {
         let stars = [];
         for (let i = 1; i <= 5; i++) {
             stars.push(
-                <span key={i} className={i <= book.rating ? 'text-yellow-400' : 'text-gray-300'}>
-                    ★
-                </span>
+                <span key={i} className={i <= book.rating ? 'text-yellow-400' : 'text-gray-300'}>★</span>
             );
         }
         return stars;
     };
 
-    const statusClass = statusColorMap[book.status as ReadingStatus] || "bg-slate-500 hover:bg-slate-600";
-    const genreClass = genreColorMap[book.genre] || "bg-slate-700 hover:bg-slate-800";
-   
+    const statusClass = statusColorMap[book.status] || "bg-slate-500";
+    const genreClass = genreColorMap[book.genre] || "bg-slate-700";
+    
     const [coverSrc, setCoverSrc] = React.useState(book.cover);
-    const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-        if (coverSrc !== LOCAL_FALLBACK_SRC) {
-            setCoverSrc(LOCAL_FALLBACK_SRC);
-        }
+    const handleError = () => {
+        if (coverSrc !== LOCAL_FALLBACK_SRC) setCoverSrc(LOCAL_FALLBACK_SRC);
     };
     React.useEffect(() => {
         setCoverSrc(book.cover);
     }, [book.cover]);
 
+    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        onUpdateBookStatus(book.id, e.target.value as ReadingStatus);
+    };
 
     return (
-        <Card className="overflow-hidden flex flex-col h-full">
-            <CardHeader className="p-0 relative h-80 w-full">
-                <Image
-                    src={coverSrc}
-                    alt={`Capa do livro ${book.title}`}
-                    fill
-                    priority={true}
-                    style={{ objectFit: 'cover' }}
-                    onError={handleError} 
-                />
-            </CardHeader>
-            <CardContent className="p-4 flex-grow flex flex-col justify-between">
-                <div className="flex-grow">
-                    <div className="flex justify-between items-start mb-1">                      
+        <Card className="overflow-hidden flex flex-col h-full justify-between">
+            <div>
+                <CardHeader className="p-0 relative h-80 w-full">
+                    <Image src={coverSrc} alt={`Capa do livro ${book.title}`} fill priority style={{ objectFit: 'cover' }} onError={handleError} />
+                </CardHeader>
+                <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
                         <Badge className={`${statusClass} text-white`}>{formatStatus(book.status)}</Badge>
-                        <div className="flex items-center ml-2">
-                            {renderStars()}
-                        </div>
+                        <div className="flex items-center">{renderStars()}</div>
                     </div>
                     <h3 className="text-lg font-bold text-card-foreground line-clamp-2">{book.title}</h3>
                     <p className="text-sm text-muted-foreground">{book.author} ({book.year})</p>
-                </div>
-              
-                <div className="mt-auto pt-2 flex flex-wrap gap-2">
-                    <Badge className={`${genreClass} text-white`}>{book.genre}</Badge>
-                </div>
-
-            </CardContent>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                        <Badge className={`${genreClass} text-white`}>{book.genre}</Badge>
+                    </div>
+                </CardContent>
+            </div>
             <CardFooter className="p-4 pt-0">
-                <div className="w-full flex justify-between space-x-2">
+                <div className="w-full flex items-center gap-2">                 
                     <Button
                         variant="outline"
                         size="sm"
-                        className="w-10"
                         onClick={() => alert(`Visualizando detalhes de: ${book.title}`)}
+                        className='bg-card border-2 border-transparent shadow-sm text-card-foreground'
                     >
-                        Ver
-                    </Button>
-                    <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => alert(`Editando status de: ${book.title}`)}
+                       <ChevronRight />
+                    </Button>            
+
+                    <select 
+                        value={book.status} 
+                        onChange={handleStatusChange}
+                        className="flex-grow border-2 border-transparent shadow-sm rounded-md px-3 text-sm h-9"
                     >
-                        <Pencil className="h-4 w-4" />
-                    </Button>
+                        {Object.values(READING_STATUS).map(status => (
+                            <option key={status} value={status}>{formatStatus(status)}</option>
+                        ))}
+                    </select>
+                    
                     <Button
                         variant="destructive"
-                        size="sm"
+                        size="icon"
                         onClick={() => onRemoveFromLibrary && onRemoveFromLibrary(book.id)}
+                        className="flex-shrink-0"
                     >
                         <Trash2 className="h-4 w-4" />
                     </Button>
