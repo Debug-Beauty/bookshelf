@@ -5,6 +5,8 @@ import BookCard from './components/BookCard';
 import ReadingGoal from './components/ReadingGoal';
 import MyLibrary from './components/MyLibrary';
 import DashboardStats from './components/DashboardStats';
+import AddBookModal from './components/AddBookModal';
+import { Button } from '../components/ui/button';
 import { Book, ReadingStatus } from '@/lib/types';
 import { initialBooks } from '@/lib/data';
 
@@ -12,6 +14,7 @@ const HomePage = () => {
   const [searchResults, setSearchResults] = useState<Book[]>([]);
   const [myLibrary, setMyLibrary] = useState<Book[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   useEffect(() => {
     try {
@@ -73,12 +76,21 @@ const HomePage = () => {
     setSearchResults([]);
   };
 
+  const handleAddBook = (newBook: Book) => {
+    setMyLibrary(prevLibrary => [newBook, ...prevLibrary]);
+    alert(`"${newBook.title}" foi adicionado à sua biblioteca!`);
+  }
   const handleRemoveFromLibrary = (bookId: string) => {
     setMyLibrary(prevLibrary => prevLibrary.filter(book => book.id !== bookId));
   };
 
   return (
     <div className="container mx-auto px-6 py-8">
+      <AddBookModal
+        isOpen={isAddModalOpen}
+        onOpenChange={setIsAddModalOpen}
+        onBookAdd={handleAddBook}
+      />   
       <DashboardStats library={myLibrary} />
       <ReadingGoal library={myLibrary} />
 
@@ -96,6 +108,12 @@ const HomePage = () => {
           </div>
         </div>
       )}
+
+      <div className="flex justify-end mt-4">
+        <Button onClick={() => setIsAddModalOpen(true)}>
+          Adicionar Novo Livro
+          </Button>
+      </div>
 
       <MyLibrary
         library={myLibrary}
