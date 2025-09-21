@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from 'react'; 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "../../components/ui/input"; 
-import { Book, ReadingStatus } from "@/lib/types";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../components/ui/tabs";
+import { Input } from "../../components/ui/input";
+import { Book, ReadingStatus } from "../../lib/types";
 import BookCard from "./BookCard";
 
 interface MyLibraryProps {
     library: Book[];
     onRemoveFromLibrary: (bookId: string) => void;
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
+    selectedGenre: string;
+    setSelectedGenre: (genre: string) => void;
 }
 
 const availableGenres = [
@@ -18,22 +21,26 @@ const availableGenres = [
     "Mistério", "Política", "Aventura"
 ];
 
-const MyLibrary = ({ library, onRemoveFromLibrary }: MyLibraryProps) => {
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedGenre, setSelectedGenre] = useState('');
+const MyLibrary = ({ 
+    library, 
+    onRemoveFromLibrary, 
+    searchTerm, 
+    setSearchTerm, 
+    selectedGenre, 
+    setSelectedGenre 
+}: MyLibraryProps) => {
 
     const filterBooks = (books: Book[]) => {
         return books.filter(book => {
             const matchesSearchTerm = book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                      book.author.toLowerCase().includes(searchTerm.toLowerCase());
-
             const matchesGenre = selectedGenre ? book.genre === selectedGenre : true;
-
             return matchesSearchTerm && matchesGenre;
         });
     };
 
     const allFilteredBooks = filterBooks(library);
+    
     const filterBooksByStatus = (status: ReadingStatus) => {
         const booksInStatus = library.filter(book => book.status === status);
         return filterBooks(booksInStatus);
