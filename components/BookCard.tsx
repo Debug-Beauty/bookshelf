@@ -6,13 +6,10 @@ import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Book, ReadingStatus, READING_STATUS } from '@/lib/types';
-import { Trash2, Eye, Edit } from "lucide-react"; // 1. Importar o ícone de Edição
-import ConfirmationModal from './ConfirmationModal';
-import EditBookModal from './EditBookModal'; // 2. Importar o modal de Edição
-import { toast } from 'sonner';
+import { Trash2, Pencil, Eye } from "lucide-react"; 
 
-const LOCAL_FALLBACK_SRC = '/fallback.png';
 
 const statusColorMap: Record<ReadingStatus, string> = {
     "QUERO_LER": "bg-chart-1", 
@@ -30,66 +27,101 @@ const genreColorMap: Record<string, string> = {
     "Poesia": "bg-violet-700", "Humor": "bg-sky-700", "Mistério": "bg-slate-700", "Política": "bg-red-900",
 };
 
+const StarRating = ({ currentRating, onRatingChange }: { currentRating: number, onRatingChange: (newRating: number) => void }) => {
+    const [hoverRating, setHoverRating] = useState(0);
+    return (
+        <div className="flex items-center" onMouseLeave={() => setHoverRating(0)}>
+            {[1, 2, 3, 4, 5].map((star) => (
+                <button key={star} onClick={() => onRatingChange(star)} onMouseEnter={() => setHoverRating(star)} className="bg-transparent border-none cursor-pointer p-0">
+                    <span className={(hoverRating >= star || (!hoverRating && currentRating >= star)) ? 'text-yellow-400 text-xl' : 'text-gray-300 text-xl'}>★</span>
+                </button>
+            ))}
+        </div>
+    );
+};
+const StaticStars = () => (
+    <div className="flex items-center">{[1, 2, 3, 4, 5].map((star) => (<span key={star} className="text-gray-300 text-xl">★</span>))}</div>
+);
+
 interface BookCardProps {
     book: Book;
+    isInLibrary: boolean;
     onRemoveFromLibrary: (bookId: string) => void;
     onUpdateBookStatus: (bookId: string, newStatus: ReadingStatus) => void;
-    onBookUpdate: (updatedBook: Book) => void; // 3. Adicionar a nova prop
+    onUpdateBookRating: (bookId: string, newRating: number) => void;
+    onEdit: (book: Book) => void; 
 }
 
-const BookCard = ({ book, onRemoveFromLibrary, onUpdateBookStatus, onBookUpdate }: BookCardProps) => {
-    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 4. Estado para o modal de edição
+const LOCAL_FALLBACK_SRC = '/fallback.png';
 
-    const [coverSrc, setCoverSrc] = React.useState(book.cover);
-    const handleError = () => { if (coverSrc !== LOCAL_FALLBACK_SRC) setCoverSrc(LOCAL_FALLBACK_SRC); };
-    React.useEffect(() => { setCoverSrc(book.cover); }, [book.cover]);
-    const formatStatus = (status: string) => { return status.replace('_', ' ').charAt(0) + status.replace('_', ' ').slice(1).toLowerCase(); };
-    const renderStars = () => { let stars = []; for (let i = 1; i <= 5; i++) { stars.push(<span key={i} className={i <= book.rating ? 'text-yellow-400' : 'text-gray-300'}>★</span>); } return stars; };
-    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => { onUpdateBookStatus(book.id, e.target.value as ReadingStatus); };
+const BookCard = ({ book, onRemoveFromLibrary, onUpdateBookStatus, onUpdateBookRating, onEdit }: BookCardProps) => {
+    const statusClass = statusColorMap[book.status] || "bg-gray-500";
+    const genreClass = genreColorMap[book.genre] || "bg-gray-700";
+
+    const formatStatus = (status: string) => status.replace('_', ' ').charAt(0) + status.replace('_', ' ').slice(1).toLowerCase();
     
-    const handleConfirmDelete = () => {
-        onRemoveFromLibrary(book.id);
-        toast.success("Livro removido", { description: `"${book.title}" foi removido da sua biblioteca.` });
-    };
-
-    const statusClass = statusColorMap[book.status] || "bg-slate-500";
-    const genreClass = genreColorMap[book.genre] || "bg-slate-700";
-
+    const [coverSrc, setCoverSrc] = React.useState(book.cover);
+    const handleError = () => { if (coverSrc !== LOCAL_FALLBACK_SRC) setCoverSrc(LOCAL_FALLBACK_SRC) };
+    React.useEffect(() => { setCoverSrc(book.cover) }, [book.cover]);
+    
     return (
-        <>
-            <ConfirmationModal isOpen={isConfirmModalOpen} onOpenChange={setIsConfirmModalOpen} onConfirm={handleConfirmDelete} title="Você tem certeza?" description="Esta ação não pode ser desfeita. O livro será removido." />
-            {/* 5. Renderizar o modal de edição e passar a função de update */}
-            <EditBookModal isOpen={isEditModalOpen} onOpenChange={setIsEditModalOpen} bookToEdit={book} onBookUpdate={onBookUpdate} />
-            
-            <Card className="overflow-hidden flex flex-col h-full justify-between">
-                <div>
-                    <CardHeader className="p-0 relative h-80 w-full"><Image src={coverSrc} alt={`Capa do livro ${book.title}`} fill priority style={{ objectFit: 'cover' }} onError={handleError} /></CardHeader>
-                    <CardContent className="p-4">
-                        <div className="flex justify-between items-start mb-2"><Badge className={`${statusClass} text-white`}>{formatStatus(book.status)}</Badge><div className="flex items-center">{renderStars()}</div></div>
-                        <h3 className="text-lg font-bold text-card-foreground line-clamp-2">{book.title}</h3>
-                        <p className="text-sm text-muted-foreground">{book.author} ({book.year})</p>
-                        <div className="mt-2 flex flex-wrap gap-2"><Badge className={`${genreClass} text-white`}>{book.genre}</Badge></div>
-                    </CardContent>
-                </div>
-                <CardFooter className="p-4 pt-0">
-                    <div className="w-full flex items-center gap-2">
-                        <Button asChild variant="outline" size="sm" className='bg-card border-2 border-transparent shadow-sm text-card-foreground'><Link href={`/book/${book.id}`}><Eye className="h-4 w-4" /></Link></Button>
-                        
-                        {/* 6. Adicionar o novo botão de Edição */}
-                        <Button variant="outline" size="sm" onClick={() => setIsEditModalOpen(true)} className='bg-card border-2 border-transparent shadow-sm text-card-foreground'>
-                            <Edit className="h-4 w-4" />
-                        </Button>
-
-                        <select value={book.status} onChange={handleStatusChange} className="flex-grow border-2 border-transparent shadow-sm rounded-md px-3 text-sm h-9">
-                            {Object.values(READING_STATUS).map(status => (<option key={status} value={status}>{formatStatus(status)}</option>))}
-                        </select>
-                        
-                        <Button variant="destructive" size="icon" onClick={() => setIsConfirmModalOpen(true)} className="flex-shrink-0"><Trash2 className="h-4 w-4" /></Button>
+        <Card className="overflow-hidden flex flex-col h-full justify-between">
+            <div>
+                <CardHeader className="p-0 relative w-full aspect-[2/3]">
+                    <Link href={`/book/${book.id}`} passHref>
+                        <Image src={coverSrc} alt={`Capa de ${book.title}`} fill style={{ objectFit: 'cover' }} onError={handleError} className="transition-transform duration-300 hover:scale-105" />
+                    </Link>
+                </CardHeader>
+                <CardContent className="p-4">
+                    <div className="flex justify-between items-center mb-2 h-6">
+                        <Badge className={`${statusClass} text-white`}>{formatStatus(book.status)}</Badge>
+                        {book.status === READING_STATUS.LIDO ? (
+                            <StarRating 
+                                currentRating={book.rating}
+                                onRatingChange={(newRating) => onUpdateBookRating(book.id, newRating)}
+                            />
+                        ) : (
+                            <StaticStars />
+                        )}
                     </div>
-                </CardFooter>
-            </Card>
-        </>
+                    <h3 className="text-lg font-bold text-card-foreground line-clamp-2 mt-2">{book.title}</h3>
+                    <p className="text-sm text-muted-foreground">{book.author} ({book.year})</p>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                        <Badge className={`${genreClass} text-white`}>{book.genre}</Badge>
+                    </div>
+                </CardContent>
+            </div>
+            <CardFooter className="p-4 pt-0">
+                <div className="w-full flex items-center gap-2">
+                    <Select value={book.status} onValueChange={(newStatus: ReadingStatus) => onUpdateBookStatus(book.id, newStatus)}>
+                        <SelectTrigger className="flex-grow">
+                            <SelectValue placeholder="Mudar status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {Object.values(READING_STATUS).map(status => (
+                                <SelectItem key={status} value={status}>
+                                    {formatStatus(status)}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                    
+                    <Link href={`/book/${book.id}`} passHref>
+                        <Button variant="outline" size="icon" title="Ver detalhes">
+                            <Eye className="h-4 w-4" />
+                        </Button>
+                    </Link>
+                    
+                    <Button variant="outline" size="icon" onClick={() => onEdit(book)} title="Editar livro">
+                        <Pencil className="h-4 w-4" />
+                    </Button>
+                    
+                    <Button variant="destructive" size="icon" onClick={() => onRemoveFromLibrary(book.id)} className="flex-shrink-0" title="Remover da biblioteca">
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                </div>
+            </CardFooter>
+        </Card>
     );
 };
 
