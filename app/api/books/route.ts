@@ -1,32 +1,23 @@
-import { NextResponse } from "next/server";
-import { initialBooks } from "@/lib/data";
+import { NextResponse } from 'next/server';
+import { books } from '@/lib/inMemoryStore';
 import { Book } from '@/lib/types';
 
-export let books: Book[]= [...initialBooks];
-
-export async function GET(){
-  return NextResponse.json(initialBooks);
+export async function GET() {
+  return NextResponse.json(books);
 }
 
-export async function POST (request: Request) {
-  try{
-  const newBook = await request.json();
+export async function POST(request: Request) {
+  try {
+    const newBook: Book = await request.json();
 
-  if (!newBook.title || !newBook.author) {
-    return NextResponse.json(
-      { error: 'Titulo e autor são obrigatórios' },
-      { status: 400 }
-    );
-  }
+    if (!newBook.title || !newBook.author) {
+      return NextResponse.json({ error: 'Título e autor são obrigatórios' }, { status: 400 });
+    }
 
-  books.unshift(newBook);
-
-  return NextResponse.json(newBook,{ status: 201 });
+    books.unshift(newBook);
+    return NextResponse.json(newBook, { status: 201 });
 
   } catch (error) {
-    return NextResponse.json(
-      {error: 'Corpo da requisição inválido' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Corpo da requisição inválido' }, { status: 400 });
   }
 }
