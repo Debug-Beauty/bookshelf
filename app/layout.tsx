@@ -4,9 +4,8 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-
-// Toaster para notificações
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "./components/ThemeProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,21 +20,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
           inter.className
         )}
       >
-        <div className="relative flex min-h-screen flex-col bg-background">
-          <Header />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
-
-        {/* 🔔 Toaster global — posição topo-direita */}
-        <Toaster position="top-right" />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <div className="relative flex min-h-screen flex-col bg-background">
+            <Header />         
+            <main className="flex-1">{children}</main>
+            <Footer />
+          </div>
+          <Toaster richColors />
+        </ThemeProvider>
       </body>
     </html>
   );
