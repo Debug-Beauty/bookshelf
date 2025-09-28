@@ -8,6 +8,7 @@ interface RegistrationData {
   confirmPassword?: string;
 }
 
+
 export const validateEmail = (email?: string): string | null => {
   if (!email) return 'Por favor, preencha o email.';
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -50,6 +51,47 @@ export function validateRegistrationForm(data: RegistrationData): FormState | nu
 
   const confirmPasswordError = validateConfirmPassword(data.password, data.confirmPassword);
   if (confirmPasswordError) return { message: confirmPasswordError };
+
+  return null;
+}
+interface ChangePasswordData {
+  currentPassword?: string;
+  newPassword?: string;
+  confirmNewPassword?: string;
+}
+
+export const validateNewPassword = (password?: string): string | null => {
+  if (!password) return 'Por favor, preencha a nova senha.';
+
+  const criteria = checkPasswordStrength(password);
+  const errors = [];
+  if (!criteria.hasMinLength) errors.push('pelo menos 8 caracteres');
+  if (!criteria.hasUppercase) errors.push('uma letra maiúscula');
+  if (!criteria.hasLowercase) errors.push('uma letra minúscula');
+  if (!criteria.hasNumber) errors.push('um número');
+  if (!criteria.hasSpecialChar) errors.push('um caractere especial (!@#$%^&*)');
+
+  if (errors.length > 0) {
+    return `A nova senha deve conter: ${errors.join(', ')}.`;
+  }
+
+  return null;
+};
+
+export function validateChangePasswordForm(data: ChangePasswordData): FormState | null {
+  if (!data.currentPassword) {
+    return { message: 'Por favor, informe sua senha atual.' };
+  }
+
+  const newPasswordError = validateNewPassword(data.newPassword);
+  if (newPasswordError) {
+    return { message: newPasswordError };
+  }
+
+  const confirmPasswordError = validateConfirmPassword(data.newPassword, data.confirmNewPassword);
+  if (confirmPasswordError) {
+    return { message: confirmPasswordError };
+  }
 
   return null;
 }

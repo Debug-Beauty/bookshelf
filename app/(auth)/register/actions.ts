@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from 'next/navigation';
-import { addUser } from '../../lib/users';
-import { validateRegistrationForm } from '../../lib/validators';
+import { addUser } from '../../../lib/users';
+import { validateRegistrationForm } from '../../../lib/validators';
 
 export interface RegisterState {
   message: string;

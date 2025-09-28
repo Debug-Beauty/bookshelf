@@ -31,7 +31,7 @@ const ReadingGoal = ({ library, onAddBookClick, onUpdateBookStatus }: ReadingGoa
     };
 
     return (
-        <Card className="mb-8">
+        <Card className="mb-8 p-4">
             <CardHeader>
                 <CardTitle>Sua Meta de Leitura</CardTitle>
                 <CardDescription>

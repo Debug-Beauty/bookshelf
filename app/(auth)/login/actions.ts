@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from 'next/navigation';
-import { findUserByEmail } from '../../lib/users';
+import { findUserByEmail } from '../../../lib/users';
 
 export interface LoginState {
   message: string;
