@@ -1,8 +1,8 @@
-import { Book } from './types';
+import { Book, ReadingStatus } from './types';
 
 const COVER_PATH = (filename: string) => `/covers/${filename}`;
 
-export const initialBooks: Book[] = [   
+let books: Book[] = [
     {
         id: "9788535914849",
         title: "O Senhor dos Anéis",
@@ -12,9 +12,9 @@ export const initialBooks: Book[] = [
         pages: 1216,
         rating: 5,
         synopsis: "Uma obra-prima da literatura fantástica.",
-        cover: COVER_PATH("senhor_aneis.jpg"), 
+        cover: COVER_PATH("senhor_aneis.jpg"),
         status: "LENDO",
-    },   
+    },
     {
         id: "9788573022216",
         title: "1984",
@@ -26,7 +26,7 @@ export const initialBooks: Book[] = [
         synopsis: "Um romance distópico sobre os perigos do totalitarismo.",
         cover: COVER_PATH("1984.jpg"),
         status: "LENDO",
-    }, 
+    },
     {
         id: "9788535902778",
         title: "Dom Casmurro",
@@ -38,7 +38,7 @@ export const initialBooks: Book[] = [
         synopsis: "A história de Bentinho e a suspeita de traição de Capitu.",
         cover: COVER_PATH("dom_casmurro.jpg"),
         status: "QUERO_LER",
-    },    
+    },
     {
         id: "9780061120084",
         title: "Cem Anos de Solidão",
@@ -62,7 +62,7 @@ export const initialBooks: Book[] = [
         synopsis: "Um homem aceita um emprego de zelador em um hotel isolado e forças malignas afetam sua sanidade.",
         cover: COVER_PATH("o_iluminado.jpg"),
         status: "LIDO",
-    },  
+    },
     {
         id: "9788532508001",
         title: "O Sol é Para Todos",
@@ -74,7 +74,7 @@ export const initialBooks: Book[] = [
         synopsis: "A história da injustiça racial vista pelos olhos de uma jovem menina.",
         cover: COVER_PATH("o_sol.jpg"),
         status: "LIDO",
-    },  
+    },
     {
         id: "9788532520690",
         title: "O Diário de Anne Frank",
@@ -86,7 +86,7 @@ export const initialBooks: Book[] = [
         synopsis: "Relato da adolescente judia sobre os anos em que viveu escondida na Segunda Guerra Mundial.",
         cover: COVER_PATH("diario_anne.jpg"),
         status: "QUERO_LER",
-    },  
+    },
     {
         id: "9788551002598",
         title: "Sapiens: Uma Breve História da Humanidade",
@@ -110,7 +110,7 @@ export const initialBooks: Book[] = [
         synopsis: "Explica como a forma de pensar sobre talentos afeta o sucesso.",
         cover: COVER_PATH("mindset.jpg"),
         status: "QUERO_LER",
-    },  
+    },
     {
         id: "9780132350884",
         title: "Clean Code",
@@ -122,7 +122,7 @@ export const initialBooks: Book[] = [
         synopsis: "Um guia essencial para escrever código limpo.",
         cover: COVER_PATH("clean_code.jpg"),
         status: "LENDO",
-    }, 
+    },
     {
         id: "9788575027878",
         title: "Pai Rico, Pai Pobre",
@@ -134,7 +134,7 @@ export const initialBooks: Book[] = [
         synopsis: "Compara as lições de um pai 'pobre' e um pai 'rico' sobre finanças.",
         cover: COVER_PATH("pai_rico.jpg"),
         status: "QUERO_LER",
-    }, 
+    },
     {
         id: "9788535921830",
         title: "A Arte da Guerra",
@@ -170,7 +170,7 @@ export const initialBooks: Book[] = [
         synopsis: "Abordagem para desenvolver produtos e empresas inovadoras.",
         cover: COVER_PATH("startup_enxuta.jpg"),
         status: "PAUSADO",
-    },   
+    },
     {
         id: "9788525419999",
         title: "A Metamorfose",
@@ -182,7 +182,7 @@ export const initialBooks: Book[] = [
         synopsis: "Um caixeiro-viajante acorda e se vê transformado em um inseto.",
         cover: COVER_PATH("metamorfose.jpg"),
         status: "QUERO_LER",
-    },  
+    },
     {
         id: "9788582352818",
         title: "Guia do Mochileiro das Galáxias",
@@ -244,3 +244,21 @@ export const initialBooks: Book[] = [
         status: "LENDO",
     },
 ];
+
+export const getBooks = async (): Promise<Book[]> => {
+    return books;
+};
+
+export const addBook = async (newBook: Book): Promise<void> => {
+    books = [newBook, ...books];
+};
+
+export const removeBook = async (bookId: string): Promise<void> => {
+    books = books.filter(book => book.id !== bookId);
+};
+
+export const updateBookStatus = async (bookId: string, newStatus: ReadingStatus): Promise<void> => {
+    books = books.map(book =>
+        book.id === bookId ? { ...book, status: newStatus } : book
+    );
+};
