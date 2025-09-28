@@ -5,6 +5,6 @@ export default async function HomePage() {
   const initialBooks = await getBooks();
 
   return (
-    <HomeDashboard initialBooks={initialBooks} />
+    <HomeDashboard books={initialBooks} />
   );
 }

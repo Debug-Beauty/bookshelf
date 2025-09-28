@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from 'next/cache';
-import { addBook, removeBook, updateBookStatus } from '@/lib/data';
+import { addBook, removeBook, updateBookStatus } from '../lib/data';
 import { Book, ReadingStatus } from '../lib/types';
 
 export async function addBookAction(formData: FormData) {
@@ -19,7 +19,7 @@ export async function addBookAction(formData: FormData) {
         author,
         cover: formData.get('coverUrl') as string || "/fallback.png",
         genre: formData.get('genre') as string || "Não especificado",
-        status: formData.get('status') as ReadingStatus || "QUERO_LER",       
+        status: formData.get('status') as ReadingStatus || "QUERO_LER",
         year: Number(formData.get('year')) || 0,
         pages: Number(formData.get('pages')) || 0,
         synopsis: formData.get('synopsis') as string || "Nenhuma sinopse adicionada.",

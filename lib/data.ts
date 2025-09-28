@@ -1,264 +1,38 @@
 import { Book, ReadingStatus } from './types';
+import fs from 'fs/promises';
+import path from 'path';
 
-const COVER_PATH = (filename: string) => `/covers/${filename}`;
-
-let books: Book[] = [
-    {
-        id: "9788535914849",
-        title: "O Senhor dos Anéis",
-        author: "J.R.R. Tolkien",
-        genre: "Fantasia",
-        year: 1954,
-        pages: 1216,
-        rating: 5,
-        synopsis: "Uma obra-prima da literatura fantástica.",
-        cover: COVER_PATH("senhor_aneis.jpg"),
-        status: "LENDO",
-    },
-    {
-        id: "9788573022216",
-        title: "1984",
-        author: "George Orwell",
-        genre: "Ficção Científica",
-        year: 1949,
-        pages: 328,
-        rating: 5,
-        synopsis: "Um romance distópico sobre os perigos do totalitarismo.",
-        cover: COVER_PATH("1984.jpg"),
-        status: "LENDO",
-    },
-    {
-        id: "9788535902778",
-        title: "Dom Casmurro",
-        author: "Machado de Assis",
-        genre: "Literatura Brasileira",
-        year: 1899,
-        pages: 256,
-        rating: 5,
-        synopsis: "A história de Bentinho e a suspeita de traição de Capitu.",
-        cover: COVER_PATH("dom_casmurro.jpg"),
-        status: "QUERO_LER",
-    },
-    {
-        id: "9780061120084",
-        title: "Cem Anos de Solidão",
-        author: "Gabriel García Márquez",
-        genre: "Realismo Mágico",
-        year: 1967,
-        pages: 417,
-        rating: 5,
-        synopsis: "A história multi-geracional da família Buendía.",
-        cover: COVER_PATH("cem_anos.jpg"),
-        status: "LIDO",
-    },
-    {
-        id: "9788579802093",
-        title: "O Iluminado",
-        author: "Stephen King",
-        genre: "Ficção",
-        year: 1977,
-        pages: 464,
-        rating: 4,
-        synopsis: "Um homem aceita um emprego de zelador em um hotel isolado e forças malignas afetam sua sanidade.",
-        cover: COVER_PATH("o_iluminado.jpg"),
-        status: "LIDO",
-    },
-    {
-        id: "9788532508001",
-        title: "O Sol é Para Todos",
-        author: "Harper Lee",
-        genre: "Romance",
-        year: 1960,
-        pages: 368,
-        rating: 5,
-        synopsis: "A história da injustiça racial vista pelos olhos de uma jovem menina.",
-        cover: COVER_PATH("o_sol.jpg"),
-        status: "LIDO",
-    },
-    {
-        id: "9788532520690",
-        title: "O Diário de Anne Frank",
-        author: "Anne Frank",
-        genre: "Biografia",
-        year: 1947,
-        pages: 352,
-        rating: 4,
-        synopsis: "Relato da adolescente judia sobre os anos em que viveu escondida na Segunda Guerra Mundial.",
-        cover: COVER_PATH("diario_anne.jpg"),
-        status: "QUERO_LER",
-    },
-    {
-        id: "9788551002598",
-        title: "Sapiens: Uma Breve História da Humanidade",
-        author: "Yuval Noah Harari",
-        genre: "História",
-        year: 2011,
-        pages: 464,
-        rating: 5,
-        synopsis: "Explora 70.000 anos de história humana.",
-        cover: COVER_PATH("sapiens.jpg"),
-        status: "LIDO",
-    },
-    {
-        id: "9788595081483",
-        title: "Mindset: A Nova Psicologia do Sucesso",
-        author: "Carol S. Dweck",
-        genre: "Psicologia",
-        year: 2006,
-        pages: 312,
-        rating: 4,
-        synopsis: "Explica como a forma de pensar sobre talentos afeta o sucesso.",
-        cover: COVER_PATH("mindset.jpg"),
-        status: "QUERO_LER",
-    },
-    {
-        id: "9780132350884",
-        title: "Clean Code",
-        author: "Robert C. Martin",
-        genre: "Programação",
-        year: 2008,
-        pages: 464,
-        rating: 5,
-        synopsis: "Um guia essencial para escrever código limpo.",
-        cover: COVER_PATH("clean_code.jpg"),
-        status: "LENDO",
-    },
-    {
-        id: "9788575027878",
-        title: "Pai Rico, Pai Pobre",
-        author: "Robert Kiyosaki",
-        genre: "Negócios",
-        year: 1997,
-        pages: 336,
-        rating: 4,
-        synopsis: "Compara as lições de um pai 'pobre' e um pai 'rico' sobre finanças.",
-        cover: COVER_PATH("pai_rico.jpg"),
-        status: "QUERO_LER",
-    },
-    {
-        id: "9788535921830",
-        title: "A Arte da Guerra",
-        author: "Sun Tzu",
-        genre: "Filosofia",
-        year: 500,
-        pages: 160,
-        rating: 4,
-        synopsis: "Tratado militar que oferece estratégias aplicáveis à vida e ao conflito.",
-        cover: COVER_PATH("arte_guerra.jpg"),
-        status: "PAUSADO",
-    },
-    {
-        id: "9788535930269",
-        title: "Poemas Escolhidos",
-        author: "Fernando Pessoa",
-        genre: "Poesia",
-        year: 2012,
-        pages: 288,
-        rating: 5,
-        synopsis: "Seleção de obras de um dos maiores poetas da língua portuguesa.",
-        cover: COVER_PATH("poemas_escolhidos.jpg"),
-        status: "QUERO_LER",
-    },
-    {
-        id: "9788580550005",
-        title: "A Startup Enxuta",
-        author: "Eric Ries",
-        genre: "Tecnologia",
-        year: 2011,
-        pages: 318,
-        rating: 4,
-        synopsis: "Abordagem para desenvolver produtos e empresas inovadoras.",
-        cover: COVER_PATH("startup_enxuta.jpg"),
-        status: "PAUSADO",
-    },
-    {
-        id: "9788525419999",
-        title: "A Metamorfose",
-        author: "Franz Kafka",
-        genre: "Clássico",
-        year: 1915,
-        pages: 112,
-        rating: 4,
-        synopsis: "Um caixeiro-viajante acorda e se vê transformado em um inseto.",
-        cover: COVER_PATH("metamorfose.jpg"),
-        status: "QUERO_LER",
-    },
-    {
-        id: "9788582352818",
-        title: "Guia do Mochileiro das Galáxias",
-        author: "Douglas Adams",
-        genre: "Humor",
-        year: 1979,
-        pages: 208,
-        rating: 4,
-        synopsis: "As desventuras de Arthur Dent após a destruição da Terra.",
-        cover: COVER_PATH("mochileiro_galaxias.jpg"),
-        status: "LENDO",
-    },
-    {
-        id: "9788539004128",
-        title: "Sherlock Holmes",
-        author: "Arthur Conan Doyle",
-        genre: "Mistério",
-        year: 1887,
-        pages: 176,
-        rating: 5,
-        synopsis: "As mais famosas aventuras do detetive Sherlock Holmes.",
-        cover: COVER_PATH("sherlock_holmes.jpg"),
-        status: "LIDO",
-    },
-    {
-        id: "9788535916058",
-        title: "O Príncipe",
-        author: "Nicolau Maquiavel",
-        genre: "Política",
-        year: 1532,
-        pages: 144,
-        rating: 4,
-        synopsis: "Tratado clássico sobre a aquisição e manutenção do poder político.",
-        cover: COVER_PATH("o_principe.jpg"),
-        status: "ABANDONADO",
-    },
-    {
-        id: "9788525064562",
-        title: "Viagem ao Centro da Terra",
-        author: "Júlio Verne",
-        genre: "Aventura",
-        year: 1864,
-        pages: 304,
-        rating: 4,
-        synopsis: "Uma equipe de cientistas descobre uma passagem para o centro da Terra.",
-        cover: COVER_PATH("viagem_centro_terra.jpg"),
-        status: "QUERO_LER",
-    },
-    {
-        id: "9788532520867",
-        title: "Elon Musk: Tesla, SpaceX e a Busca por um Futuro Fantástico",
-        author: "Ashlee Vance",
-        genre: "Biografia",
-        year: 2015,
-        pages: 424,
-        rating: 4,
-        synopsis: "Biografia autorizada de Elon Musk.",
-        cover: COVER_PATH("elon_musk.jpg"),
-        status: "LENDO",
-    },
-];
+const dbPath = path.join(process.cwd(), 'database.json');
 
 export const getBooks = async (): Promise<Book[]> => {
-    return books;
+  try {
+    const data = await fs.readFile(dbPath, 'utf-8');
+    return JSON.parse(data);
+  } catch (error) {
+    return [];
+  }
+};
+
+const saveBooks = async (books: Book[]) => {
+  await fs.writeFile(dbPath, JSON.stringify(books, null, 2));
 };
 
 export const addBook = async (newBook: Book): Promise<void> => {
-    books = [newBook, ...books];
+  const books = await getBooks();
+  const updatedBooks = [newBook, ...books];
+  await saveBooks(updatedBooks);
 };
 
 export const removeBook = async (bookId: string): Promise<void> => {
-    books = books.filter(book => book.id !== bookId);
+  const books = await getBooks();
+  const updatedBooks = books.filter(book => book.id !== bookId);
+  await saveBooks(updatedBooks);
 };
 
 export const updateBookStatus = async (bookId: string, newStatus: ReadingStatus): Promise<void> => {
-    books = books.map(book =>
-        book.id === bookId ? { ...book, status: newStatus } : book
-    );
+  const books = await getBooks();
+  const updatedBooks = books.map(book =>
+    book.id === bookId ? { ...book, status: newStatus } : book
+  );
+  await saveBooks(updatedBooks);
 };
