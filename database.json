@@ -1,17 +1,5 @@
 [
   {
-    "id": "9a64f23a-0ebf-45eb-8c4a-97af0d98dbca",
-    "title": "Coraline",
-    "author": "Neil Gaiman",
-    "cover": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXjdxaNwh6RiridwTLRF5mdT5_GuYUdc14Ew&s",
-    "genre": "Fantasia",
-    "status": "QUERO_LER",
-    "year": 2000,
-    "pages": 333,
-    "synopsis": "33",
-    "rating": 0
-  },
-  {
     "id": "9788535914849",
     "title": "O Senhor dos Anéis",
     "author": "J.R.R. Tolkien",

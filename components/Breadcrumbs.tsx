@@ -1,7 +1,7 @@
 "use client";
 
-import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { ChevronRight } from 'lucide-react';
 
 interface BreadcrumbsProps {
@@ -10,36 +10,43 @@ interface BreadcrumbsProps {
 
 const Breadcrumbs = ({ bookTitle }: BreadcrumbsProps) => {
   const pathname = usePathname();
-  const pathSegments = pathname.split('/').filter(segment => segment);
+  const segments = pathname.split('/').filter(Boolean);
 
-  if (pathSegments.length === 0) {
+  const translations: { [key: string]: string } = {
+    'book': 'Biblioteca'
+  };
+
+  if (segments.length === 0) {
     return null;
   }
 
   return (
-    <nav aria-label="breadcrumb" className="container mx-auto px-6 py-4">
+    <nav aria-label="Breadcrumb" className="container mx-auto px-6 py-4">
       <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
         <li>
-          <Link href="/" className="hover:text-primary">Início</Link>
+          <Link href="/" className="hover:text-primary transition-colors">
+            Início
+          </Link>
         </li>
-        {pathSegments.map((segment, index) => {
-          const href = `/${pathSegments.slice(0, index + 1).join('/')}`;
-          const isLast = index === pathSegments.length - 1;
+        {segments.map((segment, index) => {
+          const isLast = index === segments.length - 1;
+               
+          const href = segment === 'book' ? '/#library' : `/${segments.slice(0, index + 1).join('/')}`;
           
-          let segmentDisplay = decodeURIComponent(segment);
-          if (isLast && segment === "book" && pathSegments.length > 1) {
-             segmentDisplay = "Livro";
-          } else if (isLast && pathSegments[index - 1] === "book" && bookTitle) {
-            segmentDisplay = bookTitle;
+          let text = translations[segment] || segment;
+          if (isLast && bookTitle) {
+            text = bookTitle;
           }
 
           return (
-            <li key={href} className="flex items-center space-x-2">
+            <li key={segment} className="flex items-center space-x-2">
               <ChevronRight className="h-4 w-4" />
               {isLast ? (
-                <span className="font-semibold text-foreground">{segmentDisplay}</span>
+                <span className="font-semibold text-foreground">{text}</span>
               ) : (
-                <Link href={href} className="hover:text-primary">{segmentDisplay}</Link>
+                <Link href={href} className="hover:text-primary transition-colors">
+                  {text}
+                </Link>
               )}
             </li>
           );

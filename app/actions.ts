@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from 'next/cache';
-import { addBook, removeBook, updateBookStatus } from '../lib/data';
+import { addBook, removeBook, updateBook, updateBookStatus, getBookById } from '../lib/data';
 import { Book, ReadingStatus } from '../lib/types';
 
 export async function addBookAction(formData: FormData) {
@@ -38,4 +38,15 @@ export async function removeBookAction(bookId: string) {
 export async function updateBookStatusAction(bookId: string, newStatus: ReadingStatus) {
     await updateBookStatus(bookId, newStatus);
     revalidatePath('/');
+}
+
+export async function getBookByIdAction(bookId: string): Promise<Book | undefined> {
+  const book = await getBookById(bookId);
+  return book;
+}
+
+export async function updateBookAction(updatedBook: Book) {
+  await updateBook(updatedBook);
+  revalidatePath('/'); 
+  revalidatePath(`/book/${updatedBook.id}`);
 }

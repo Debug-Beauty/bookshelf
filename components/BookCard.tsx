@@ -48,6 +48,30 @@ const genreColorMap: Record<string, string> = {
   Política: "bg-red-900",
 };
 
+const StarRating = ({ currentRating, onRatingChange }: { currentRating: number, onRatingChange: (newRating: number) => void }) => {
+    const [hoverRating, setHoverRating] = useState(0);
+
+    return (
+        <div className="flex items-center" onMouseLeave={() => setHoverRating(0)}>
+            {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                    key={star}
+                    onClick={() => onRatingChange(star)}
+                    onMouseEnter={() => setHoverRating(star)}
+                    className="bg-transparent border-none cursor-pointer p-0"
+                >
+                    <span className={
+                        (hoverRating >= star || (!hoverRating && currentRating >= star)) 
+                        ? 'text-yellow-400 text-xl' 
+                        : 'text-gray-300 text-xl'
+                    }>
+                        ★
+                    </span>
+                </button>
+            ))}
+        </div>
+    );
+};
 interface BookCardProps {
   book: Book;
   onRemoveFromLibrary: (bookId: string) => void;
@@ -74,30 +98,13 @@ const BookCard = ({
 
   const formatStatus = (status: string) => {
     const s = status.replace(/_/g, " ").toLowerCase();
-    return s.charAt(0).toUpperCase() + s.slice(1); // ✅ com ()
+    return s.charAt(0).toUpperCase() + s.slice(1); 
   };
 
-  const renderStars = () => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <span
-          key={i}
-          className={i <= book.rating ? "text-yellow-400" : "text-gray-300"}
-        >
-          ★
-        </span>
-      );
-    }
-    return stars;
-  };
-
-  // Exclusão: o modal já dispara o toast destrutivo; aqui só removemos do estado
   const handleConfirmDelete = () => {
     onRemoveFromLibrary(book.id);
   };
-
-  // Status atualizado: toast de sucesso
+ 
   const handleChangeStatus = (newStatus: ReadingStatus) => {
     onUpdateBookStatus(book.id, newStatus);
     toast.success("Status atualizado", {
@@ -105,6 +112,11 @@ const BookCard = ({
         newStatus
       )}.`,
     });
+  };
+
+  const handleRatingChange = (newRating: number) => {
+    const updatedBook = { ...book, rating: newRating };
+    onBookUpdate(updatedBook);
   };
 
   const statusClass = statusColorMap[book.status] || "bg-slate-500";
@@ -131,12 +143,12 @@ const BookCard = ({
         <div>
           <div className="relative aspect-[2/3] w-full">
             <Image
-              src={coverSrc || LOCAL_FALLBACK_SRC}
+              src={book.cover}
               alt={`Capa do livro ${book.title}`}
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover"
               priority
-              style={{ objectFit: "cover" }}
-              onError={handleError}
             />
           </div>
 
@@ -145,7 +157,10 @@ const BookCard = ({
               <Badge className={`${statusClass} text-white`}>
                 {formatStatus(book.status)}
               </Badge>
-              <div className="flex items-center">{renderStars()}</div>
+              <StarRating 
+                currentRating={book.rating || 0}
+                onRatingChange={handleRatingChange}
+              />
             </div>
 
             <h3 className="text-lg font-bold text-card-foreground line-clamp-2">
@@ -187,7 +202,7 @@ const BookCard = ({
 
             <Select
               value={book.status}
-              onValueChange={(v) => handleChangeStatus(v as ReadingStatus)} // ✅ tipado
+              onValueChange={(v) => handleChangeStatus(v as ReadingStatus)} 
             >
               <SelectTrigger
                 className="flex-grow w-full border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground"

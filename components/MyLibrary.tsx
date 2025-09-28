@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import { Input } from "../components/ui/input";
 import { Book, ReadingStatus, READING_STATUS } from "../lib/types";
 import BookCard from "./BookCard";
+
 interface MyLibraryProps {
     library: Book[];
     onRemoveFromLibrary: (bookId: string) => void;
@@ -42,10 +43,10 @@ const MyLibrary = ({
     onBookUpdate,
     searchTerm, 
     selectedGenre, 
-    onFilterChange 
+    onFilterChange
 }: MyLibraryProps) => {
 
-    const availableGenres = useMemo(() => {
+    const availableGenres = useMemo(() => {      
         const genres = new Set(library.map(book => book.genre));
         return Array.from(genres).sort();
     }, [library]);
@@ -63,7 +64,7 @@ const MyLibrary = ({
     return (
         <div id="library" className="mt-12">
             <h2 className="text-3xl font-bold text-primary mb-6">Minha Biblioteca</h2>
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">             
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">                
                 <Input 
                     type="text" 
                     placeholder="Buscar por título ou autor..." 
@@ -84,7 +85,7 @@ const MyLibrary = ({
                 <TabsList className="grid w-full bg-card grid-cols-3 sm:grid-cols-3 md:grid-cols-6">
                     {allTabs.map(tab => (<TabsTrigger key={tab} value={tab}>{formatTabTitle(tab)}</TabsTrigger>))}
                 </TabsList>
-                {allTabs.map(tab => {                  
+                {allTabs.map(tab => {                 
                     const booksForTab = tab === "TODOS" 
                         ? library 
                         : library.filter(book => book.status === tab);
