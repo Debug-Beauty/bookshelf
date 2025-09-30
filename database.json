@@ -1,5 +1,20 @@
 [
   {
+    "id": "b695398f-427f-4ec6-b583-864e2591df09",
+    "title": "Harry Potter e o Prisioneiro de Azkaban",
+    "author": "J.K. Rowling",
+    "cover": "https://m.media-amazon.com/images/I/81u+ljPVifL.jpg",
+    "genre": "Fantasia",
+    "status": "LIDO",
+    "year": 2000,
+    "pages": 348,
+    "synopsis": "No seu terceiro ano em Hogwarts, Harry Potter vê-se em perigo quando Sirius Black, um prisioneiro acusado de ser um fiel seguidor de Voldemort, foge da prisão de Azkaban e parece estar à sua procura. ",
+    "rating": 5,
+    "currentPage": 0,
+    "isbn": "853253080X",
+    "notes": ""
+  },
+  {
     "id": "9788535914849",
     "title": "O Senhor dos Anéis",
     "author": "J.R.R. Tolkien",
@@ -7,7 +22,7 @@
     "year": 1954,
     "pages": 1216,
     "rating": 5,
-    "synopsis": "Uma obra-prima da literatura fantástica.",
+    "synopsis": "A Sociedade do Anel é formada por hobbits, um anão, um elfo, dois homens e um mago, que iniciam uma perigosa jornada para destruir o Um Anel no fogo da Montanha da Perdição, enfrentando desafios e inimigos sombrios.",
     "cover": "/covers/senhor_aneis.jpg",
     "status": "LENDO"
   },
@@ -19,7 +34,7 @@
     "year": 1949,
     "pages": 328,
     "rating": 5,
-    "synopsis": "Um romance distópico sobre os perigos do totalitarismo.",
+    "synopsis": "Em um regime totalitário na Oceânia, onde todos são vigiados pelo Grande Irmão, Winston Smith, um cidadão inserido em um contexto de repressão, luta contra um sistema que controla o pensamento e a verdade.",
     "cover": "/covers/1984.jpg",
     "status": "LENDO"
   },
@@ -31,7 +46,7 @@
     "year": 1899,
     "pages": 256,
     "rating": 5,
-    "synopsis": "A história de Bentinho e a suspeita de traição de Capitu.",
+    "synopsis": "Bentinho e Capitu, apaixonados desde a adolescência, enfrentam um grande obstáculo quando a mãe de Bentinho, por uma promessa, destina o filho ao sacerdócio, desencadeando uma trama de ciúmes e incertezas.",
     "cover": "/covers/dom_casmurro.jpg",
     "status": "QUERO_LER"
   },
@@ -43,7 +58,7 @@
     "year": 1967,
     "pages": 417,
     "rating": 5,
-    "synopsis": "A história multi-geracional da família Buendía.",
+    "synopsis": "A saga da família Buendía na cidade fictícia de Macondo. Através de sete gerações, a obra explora temas como amor, guerra, política e solidão, misturando o fantástico com a realidade latino-americana.",
     "cover": "/covers/cem_anos.jpg",
     "status": "LIDO"
   },
@@ -55,7 +70,7 @@
     "year": 1977,
     "pages": 464,
     "rating": 4,
-    "synopsis": "Um homem aceita um emprego de zelador em um hotel isolado e forças malignas afetam sua sanidade.",
+    "synopsis": "Jack Torrance, um escritor e alcoólatra em recuperação, aceita o emprego de zelador no isolado Hotel Overlook durante o inverno, mas forças sobrenaturais no local começam a afetar sua sanidade e a de sua família.",
     "cover": "/covers/o_iluminado.jpg",
     "status": "LIDO"
   },
@@ -67,7 +82,7 @@
     "year": 1960,
     "pages": 368,
     "rating": 5,
-    "synopsis": "A história da injustiça racial vista pelos olhos de uma jovem menina.",
+    "synopsis": "Nos Estados Unidos dos anos 1930, um advogado defende um homem negro acusado injustamente de estuprar uma mulher branca. A história é narrada por sua filha, Scout, que testemunha o racismo e a injustiça da sociedade.",
     "cover": "/covers/o_sol.jpg",
     "status": "LIDO"
   },
@@ -79,7 +94,7 @@
     "year": 1947,
     "pages": 352,
     "rating": 4,
-    "synopsis": "Relato da adolescente judia sobre os anos em que viveu escondida na Segunda Guerra Mundial.",
+    "synopsis": "O relato íntimo e comovente de uma jovem judia que, durante a Segunda Guerra Mundial, viveu escondida com sua família em um anexo secreto para escapar da perseguição nazista, registrando seus medos, esperanças e reflexões.",
     "cover": "/covers/diario_anne.jpg",
     "status": "QUERO_LER"
   },
@@ -91,7 +106,7 @@
     "year": 2011,
     "pages": 464,
     "rating": 5,
-    "synopsis": "Explora 70.000 anos de história humana.",
+    "synopsis": "Uma exploração fascinante de 70.000 anos de história humana, questionando tudo o que sabemos sobre quem somos, como chegamos até aqui e para onde podemos estar indo, desde a Idade da Pedra até a era da inteligência artificial.",
     "cover": "/covers/sapiens.jpg",
     "status": "LIDO"
   },
@@ -103,7 +118,7 @@
     "year": 2006,
     "pages": 312,
     "rating": 4,
-    "synopsis": "Explica como a forma de pensar sobre talentos afeta o sucesso.",
+    "synopsis": "Carol S. Dweck revela como o sucesso pode ser alcançado pela maneira como lidamos com nossos objetivos. O mindset não é um mero traço de personalidade, é a explicação de por que somos otimistas ou pessimistas, bem-sucedidos ou não.",
     "cover": "/covers/mindset.jpg",
     "status": "QUERO_LER"
   },
@@ -115,7 +130,7 @@
     "year": 2008,
     "pages": 464,
     "rating": 5,
-    "synopsis": "Um guia essencial para escrever código limpo.",
+    "synopsis": "Mesmo um código mau pode funcionar. Mas se ele não for limpo, pode aniquilar uma empresa de desenvolvimento. Este livro ensina as práticas essenciais para escrever um código limpo, legível e de fácil manutenção.",
     "cover": "/covers/clean_code.jpg",
     "status": "LENDO"
   },
@@ -127,7 +142,7 @@
     "year": 1997,
     "pages": 336,
     "rating": 4,
-    "synopsis": "Compara as lições de um pai 'pobre' e um pai 'rico' sobre finanças.",
+    "synopsis": "O livro redefine a forma como vemos o dinheiro, incentivando uma mudança de mentalidade sobre finanças pessoais e destacando a importância da educação financeira para construir riqueza e alcançar a liberdade.",
     "cover": "/covers/pai_rico.jpg",
     "status": "QUERO_LER"
   },
@@ -139,7 +154,7 @@
     "year": 500,
     "pages": 160,
     "rating": 4,
-    "synopsis": "Tratado militar que oferece estratégias aplicáveis à vida e ao conflito.",
+    "synopsis": "Um antigo tratado militar chinês que oferece estratégias atemporais sobre tática, liderança e conflito. Seus princípios são aplicados não apenas na guerra, mas também nos negócios, na política e na vida cotidiana.",
     "cover": "/covers/arte_guerra.jpg",
     "status": "PAUSADO"
   },
@@ -151,7 +166,7 @@
     "year": 2012,
     "pages": 288,
     "rating": 5,
-    "synopsis": "Seleção de obras de um dos maiores poetas da língua portuguesa.",
+    "synopsis": "Uma seleção abrangente da obra de um dos maiores poetas da língua portuguesa, incluindo poemas de seus principais heterônimos, como Alberto Caeiro, Ricardo Reis e Álvaro de Campos, explorando a multiplicidade do eu.",
     "cover": "/covers/poemas_escolhidos.jpg",
     "status": "QUERO_LER"
   },
@@ -162,8 +177,7 @@
     "genre": "Tecnologia",
     "year": 2011,
     "pages": 318,
-    "rating": 4,
-    "synopsis": "Abordagem para desenvolver produtos e empresas inovadoras.",
+    "synopsis": "Este livro introduz uma metodologia para o desenvolvimento de negócios e produtos, focada na inovação contínua e na criação de empresas de sucesso em um ambiente de extrema incerteza. Essencial para empreendedores e inovadores.",
     "cover": "/covers/startup_enxuta.jpg",
     "status": "PAUSADO"
   },
@@ -175,7 +189,7 @@
     "year": 1915,
     "pages": 112,
     "rating": 4,
-    "synopsis": "Um caixeiro-viajante acorda e se vê transformado em um inseto.",
+    "synopsis": "Gregor Samsa, um caixeiro-viajante que sustenta a família, acorda certa manhã transformado em um inseto monstruoso. A obra explora temas de alienação, isolamento e a desumanização do indivíduo na sociedade moderna.",
     "cover": "/covers/metamorfose.jpg",
     "status": "QUERO_LER"
   },
@@ -187,19 +201,19 @@
     "year": 1979,
     "pages": 208,
     "rating": 4,
-    "synopsis": "As desventuras de Arthur Dent após a destruição da Terra.",
+    "synopsis": "No dia em que a Terra é demolida para dar lugar a uma via expressa espacial, Arthur Dent é salvo por seu amigo Ford Prefect, um extraterrestre. Juntos, eles embarcam em uma hilária e absurda aventura pela galáxia.",
     "cover": "/covers/mochileiro_galaxias.jpg",
     "status": "LENDO"
   },
   {
     "id": "9788539004128",
-    "title": "Sherlock Holmes",
+    "title": "Um Estudo em Vermelho",
     "author": "Arthur Conan Doyle",
     "genre": "Mistério",
     "year": 1887,
     "pages": 176,
     "rating": 5,
-    "synopsis": "As mais famosas aventuras do detetive Sherlock Holmes.",
+    "synopsis": "A primeira aventura de Sherlock Holmes. Um homem é encontrado morto, sem ferimentos, mas cercado de sangue. O caso, um enigma para a Scotland Yard, marca o início da lendária parceria entre Holmes e Dr. Watson.",
     "cover": "/covers/sherlock_holmes.jpg",
     "status": "LIDO"
   },
@@ -211,7 +225,7 @@
     "year": 1532,
     "pages": 144,
     "rating": 4,
-    "synopsis": "Tratado clássico sobre a aquisição e manutenção do poder político.",
+    "synopsis": "Um tratado político fundamental que oferece conselhos sobre como os governantes podem conquistar e manter o poder. A obra analisa a natureza do Estado, a guerra e as qualidades necessárias para uma liderança eficaz.",
     "cover": "/covers/o_principe.jpg",
     "status": "ABANDONADO"
   },
@@ -223,19 +237,19 @@
     "year": 1864,
     "pages": 304,
     "rating": 4,
-    "synopsis": "Uma equipe de cientistas descobre uma passagem para o centro da Terra.",
+    "synopsis": "O professor Lidenbrock descobre um manuscrito que revela uma passagem para o centro da Terra através de um vulcão na Islândia. Ele, seu sobrinho Axel e o guia Hans embarcam em uma expedição rumo ao desconhecido.",
     "cover": "/covers/viagem_centro_terra.jpg",
     "status": "QUERO_LER"
   },
   {
     "id": "9788532520867",
-    "title": "Elon Musk: Tesla, SpaceX e a Busca por um Futuro Fantástico",
+    "title": "Elon Musk",
     "author": "Ashlee Vance",
     "genre": "Biografia",
     "year": 2015,
     "pages": 424,
     "rating": 4,
-    "synopsis": "Biografia autorizada de Elon Musk.",
+    "synopsis": "Ashlee Vance oferece um olhar aprofundado sobre a vida do empreendedor Elon Musk, desde sua infância na África do Sul até se tornar o cérebro por trás de empresas revolucionárias como SpaceX, Tesla e SolarCity.",
     "cover": "/covers/elon_musk.jpg",
     "status": "LENDO"
   }
