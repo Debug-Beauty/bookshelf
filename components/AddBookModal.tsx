@@ -53,15 +53,18 @@ const AddBookModal = ({ isOpen, onOpenChange }: AddBookModalProps) => {
   const [year, setYear] = useState("");
   const [pages, setPages] = useState("");
   const [synopsis, setSynopsis] = useState("");
+  const [currentPage, setCurrentPage] = useState("");
+  const [isbn, setIsbn] = useState("");
+  const [notes, setNotes] = useState("");
   const [formProgress, setFormProgress] = useState(0);
   const [coverError, setCoverError] = useState(false);
 
   useEffect(() => {
-    const fields = [title, author, coverUrl, genre, status, year, pages, synopsis];
+    const fields = [title, author, coverUrl, genre, status, year, pages, synopsis, currentPage, isbn, notes];
     const filledFields = fields.filter((field) => field !== "" && field !== null).length;
     const progress = (filledFields / fields.length) * 100;
     setFormProgress(progress);
-  }, [title, author, coverUrl, genre, status, year, pages, synopsis]);
+  }, [title, author, coverUrl, genre, status, year, pages, synopsis, currentPage, isbn, notes]);
 
   const handleFormSubmit = async (formData: FormData) => {
     const title = formData.get('title') as string;
@@ -120,6 +123,14 @@ const AddBookModal = ({ isOpen, onOpenChange }: AddBookModalProps) => {
               <Label htmlFor="pages" className="text-right">Páginas</Label>
               <Input id="pages" name="pages" type="number" value={pages} onChange={(e) => setPages(e.target.value)} className="col-span-3" />
             </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="currentPage" className="text-right">Página Atual</Label>
+              <Input id="currentPage" name="currentPage" type="number" value={currentPage} onChange={(e) => setCurrentPage(e.target.value)} className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="isbn" className="text-right">ISBN</Label>
+              <Input id="isbn" name="isbn" value={isbn} onChange={(e) => setIsbn(e.target.value)} className="col-span-3" />
+            </div>
             <div className="grid grid-cols-4 items-start gap-4">
               <Label htmlFor="synopsis" className="text-right pt-2">Sinopse</Label>
               <Textarea
@@ -130,6 +141,17 @@ const AddBookModal = ({ isOpen, onOpenChange }: AddBookModalProps) => {
                 className="col-span-3 bg-white dark:bg-gray-800 text-black dark:text-gray-200"
                 rows={3}
               />
+            </div>
+            <div className="grid grid-cols-4 items-start gap-4">
+                <Label htmlFor="notes" className="text-right pt-2">Notas</Label>
+                <Textarea
+                    id="notes"
+                    name="notes"
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="col-span-3 bg-white dark:bg-gray-800 text-black dark:text-gray-200"
+                    rows={3}
+                />
             </div>
 
             <div className="grid grid-cols-4 items-center gap-4">

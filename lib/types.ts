@@ -18,4 +18,7 @@ export interface Book {
   genre: string;
   rating: number;
   status: ReadingStatus;
+  currentPage?: number;
+  isbn?: string;
+  notes?: string;
 }

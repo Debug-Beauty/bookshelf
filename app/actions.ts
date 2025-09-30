@@ -24,6 +24,9 @@ export async function addBookAction(formData: FormData) {
         pages: Number(formData.get('pages')) || 0,
         synopsis: formData.get('synopsis') as string || "Nenhuma sinopse adicionada.",
         rating: 0,
+        currentPage: Number(formData.get('currentPage')) || 0,
+        isbn: formData.get('isbn') as string || "",
+        notes: formData.get('notes') as string || "",
     };
 
     await addBook(newBook);
