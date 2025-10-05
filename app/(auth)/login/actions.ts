@@ -7,7 +7,10 @@ export interface LoginState {
   message: string;
 }
 
-export async function loginUser(prevState: LoginState, formData: FormData): Promise<LoginState> {
+export async function loginUser(
+  state: void | LoginState,
+  formData: FormData
+): Promise<LoginState | void> {
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
 

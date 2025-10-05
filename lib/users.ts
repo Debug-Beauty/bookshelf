@@ -1,33 +1,46 @@
-interface User {
+import prisma  from './prisma';
+import { hash, compare } from 'bcryptjs';
+
+export interface User {
   id: string;
   email: string;
-  password: string; 
+  password: string;
 }
 
-const users: User[] = [
-  {
-    id: 'test-user-01',
-    email: 'test@test.com',
-    password: '123456'
-  }
-];
-
 export const addUser = async (newUser: Omit<User, 'id'>): Promise<User> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
+  const existing = await prisma.user.findUnique({
+    where: { email: newUser.email }
+  });
 
-  if (users.find(user => user.email === newUser.email)) {
+  if (existing) {
     throw new Error('Este email já está em uso. Tente outro.');
   }
 
-  const user = { id: Date.now().toString(), ...newUser };
-  users.push(user);
-  console.log('Usuários no "banco de dados" após registro:', users); 
+  const hashedPassword = await hash(newUser.password, 10);
+
+  const user = await prisma.user.create({
+    data: {
+      email: newUser.email,
+      password: hashedPassword
+    }
+  });
+
   return user;
 };
 
-export const findUserByEmail = async (email: string): Promise<User | undefined> => {
-  await new Promise(resolve => setTimeout(resolve, 500));
-  const user = users.find(u => u.email === email);
-  console.log(`Procurando por ${email}, encontrado:`, user);
+export const findUserByEmail = async (email: string): Promise<User | null> => {
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+  return user;
+};
+
+export const validateUser = async (email: string, password: string): Promise<User | null> => {
+  const user = await findUserByEmail(email);
+  if (!user) return null;
+
+  const isValid = await compare(password, user.password);
+  if (!isValid) return null;
+
   return user;
 };
