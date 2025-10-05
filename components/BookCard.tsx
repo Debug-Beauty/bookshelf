@@ -120,7 +120,8 @@ const BookCard = ({
   };
 
   const statusClass = statusColorMap[book.status] || "bg-slate-500";
-  const genreClass = genreColorMap[book.genre] || "bg-slate-700";
+  const genreName = typeof book.genre === "object" && book.genre !== null ? book.genre.name : book.genre;
+  const genreClass = genreColorMap[genreName] || "bg-slate-700";
 
   return (
     <>
@@ -172,7 +173,7 @@ const BookCard = ({
 
             <div className="mt-2 flex flex-wrap gap-2">
               <Badge className={`${genreClass} text-white`}>
-                {typeof book.genre === "object" ? book.genre.name : book.genre}
+                {genreName}
               </Badge>
             </div>
           </CardContent>
