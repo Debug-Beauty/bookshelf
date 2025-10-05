@@ -171,7 +171,9 @@ const BookCard = ({
             </p>
 
             <div className="mt-2 flex flex-wrap gap-2">
-              <Badge className={`${genreClass} text-white`}>{book.genre}</Badge>
+              <Badge className={`${genreClass} text-white`}>
+                {typeof book.genre === "object" ? book.genre.name : book.genre}
+              </Badge>
             </div>
           </CardContent>
         </div>

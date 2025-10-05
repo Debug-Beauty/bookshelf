@@ -14,10 +14,11 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "sonner";
+import { BookClientProps } from "./interface/IBookClientProps";
 
 const LOCAL_FALLBACK_SRC = "/fallback.png";
 
-export default function BookDetailClient({ initialBook }: { initialBook: Book }) {
+export default function BookDetailClient({ initialBook }: BookClientProps) {
   const router = useRouter();
   const [book, setBook] = useState<Book>(initialBook);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -117,7 +118,7 @@ export default function BookDetailClient({ initialBook }: { initialBook: Book })
                 <h1 className="text-4xl font-bold text-primary mb-2">{book.title}</h1>
                 <h2 className="text-xl text-muted-foreground mb-4">{book.author} ({book.year})</h2>
                 <div className="flex items-center gap-4 mb-4">
-                  <Badge>{book.genre}</Badge>
+                  <Badge>{book.genre.name}</Badge>
                   <div className="flex items-center">{renderStars()}</div>
                 </div>
               </div>

@@ -1,20 +1,33 @@
-import { getBookById } from "@/lib/data";
+import { getBookById, BookWithGenre } from "@/lib/data";
 import { notFound } from "next/navigation";
 import BookDetailClient from "@/components/BookDetailClient";
 
 export const dynamic = 'force-dynamic';
 
-export default async function BookDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = await params;
+interface BookDetailPageProps {
+  params: { id: string };
+}
+
+export default async function BookDetailPage({ params }: BookDetailPageProps) {
+  const { id } = params;
+
   const book = await getBookById(id);
 
   if (!book) {
     notFound();
   }
 
-  return <BookDetailClient initialBook={book} />;
+  const initialBook = {
+    ...book,
+    genre: book.genre ?? { id: "", name: "Sem gênero" },
+    year: book.year ?? 0,
+    pages: book.pages ?? 0,
+    rating: book.rating ?? 0,
+    synopsis: book.synopsis ?? "",
+    cover: book.cover ?? "/fallback.png",
+    isbn: book.isbn ?? undefined,
+    notes: book.notes ?? "",
+  };
+
+  return <BookDetailClient initialBook={initialBook} />;
 }

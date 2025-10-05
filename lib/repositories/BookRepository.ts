@@ -13,7 +13,7 @@ export class BookRepository {
     });
   }
 
-  async findById(id: string): Promise<Book | null> {
+  async findById(id: string): Promise<BookWithGenre | null> {
     return prisma.book.findUnique({
       where: { id },
       include: { genre: true },
