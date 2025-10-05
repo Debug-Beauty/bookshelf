@@ -30,7 +30,7 @@ model Genre {
 }
 
 model Book {
-  id          String       @id
+  id          String       @id @default(uuid())
   title       String
   author      String
   genreId     String?

@@ -15,7 +15,7 @@ export interface Book {
   pages: number;
   year: number;
   cover: string;
-  genre: string;
+  genre: { id: string; name: string };
   rating: number;
   status: ReadingStatus;
   currentPage?: number;

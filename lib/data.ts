@@ -1,10 +1,14 @@
 import { BookRepository } from './repositories/BookRepository';
-import { Prisma, Book } from './generated/prisma';
+import { Genre, Prisma, Book as PrismaBook } from './generated/prisma';
 import { ReadingStatus } from './types';
+import { BookClientProps } from '@/components/interface/IBookClientProps';
 
 const bookRepo = new BookRepository();
 
-export const getBooks = async (searchTerm?: string, genre?: string): Promise<Book[]> => {
+export type BookWithGenre = PrismaBook & { genre: Genre };
+
+
+export const getBooks = async (searchTerm?: string, genre?: string): Promise<PrismaBook[]> => {
   let books = await bookRepo.findAll();
 
   if (searchTerm) {
@@ -22,7 +26,7 @@ export const getBooks = async (searchTerm?: string, genre?: string): Promise<Boo
   return books;
 };
 
-export const addBook = async (newBook: Prisma.BookCreateInput): Promise<Book> => {
+export const addBook = async (newBook: Prisma.BookCreateInput): Promise<PrismaBook> => {
   return await bookRepo.create(newBook);
 };
 
@@ -34,11 +38,28 @@ export const updateBookStatus = async (bookId: string, newStatus: ReadingStatus)
   await bookRepo.update(bookId, { status: newStatus });
 };
 
-export const getBookById = async (bookId: string): Promise<Book | null> => {
-  return await bookRepo.findById(bookId);
+export const getBookById = async (id: string): Promise<BookClientProps['initialBook'] | null> => {
+  const book = await bookRepo.findById(id);
+  if (!book) return null;
+
+  return {
+    id: book.id,
+    title: book.title,
+    author: book.author,
+    genre: book.genre ?? { id: '', name: 'Sem gênero' },
+    year: book.year ?? 0,
+    pages: book.pages ?? 0,
+    rating: book.rating ?? 0,
+    synopsis: book.synopsis ?? '',
+    cover: book.cover ?? '/fallback.png',
+    status: book.status,
+    currentPage: book.currentPage ?? 0,
+    isbn: book.isbn ?? undefined,
+    notes: book.notes ?? undefined,
+  };
 };
 
-export const updateBook = async (updatedBook: Prisma.BookUpdateInput & { id: string }): Promise<Book> => {
+export const updateBook = async (updatedBook: Prisma.BookUpdateInput & { id: string }): Promise<PrismaBook> => {
   const { id, ...data } = updatedBook;
   return await bookRepo.update(id, data);
 };
