@@ -1,23 +1,25 @@
+import { BookRepository } from '@/lib/repositories/BookRepository';
 import { NextResponse } from 'next/server';
-import { books } from '@/lib/inMemoryStore';
-import { Book } from '@/lib/types';
 
-export async function GET() {
-  return NextResponse.json(books);
-}
+const bookRepo = new BookRepository();
 
 export async function POST(request: Request) {
   try {
-    const newBook: Book = await request.json();
-
-    if (!newBook.title || !newBook.author) {
-      return NextResponse.json({ error: 'Título e autor são obrigatórios' }, { status: 400 });
-    }
-
-    books.unshift(newBook);
+    const data = await request.json();
+    const newBook = await bookRepo.create(data);
     return NextResponse.json(newBook, { status: 201 });
-
   } catch (error) {
-    return NextResponse.json({ error: 'Corpo da requisição inválido' }, { status: 400 });
+    console.error(error);
+    return NextResponse.json({ error: 'Erro ao criar o livro' }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  try {
+    const books = await bookRepo.findAll();
+    return NextResponse.json(books);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: 'Erro ao listar livros' }, { status: 500 });
   }
 }

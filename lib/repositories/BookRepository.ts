@@ -1,8 +1,12 @@
 import { Book, Prisma } from "../generated/prisma";
 import prisma from "../prisma";
 
+type BookWithGenre = Prisma.BookGetPayload<{
+  include: { genre: true };
+}>;
+
 export class BookRepository {
-  async findAll(): Promise<Book[]> {
+   async findAll(): Promise<BookWithGenre[]> {
     return prisma.book.findMany({
       include: { genre: true },
       orderBy: { createdAt: "desc" },
@@ -16,15 +20,25 @@ export class BookRepository {
     });
   }
 
-  async create(data: Prisma.BookCreateInput): Promise<Book> {
-    return prisma.book.create({ data });
+  async create(data: Prisma.BookCreateInput): Promise<BookWithGenre> {
+    return prisma.book.create({
+      data,
+      include: { genre: true },
+    });
   }
 
-  async update(id: string, data: Prisma.BookUpdateInput): Promise<Book> {
-    return prisma.book.update({ where: { id }, data });
+   async update(id: string, data: Prisma.BookUpdateInput): Promise<BookWithGenre> {
+    return prisma.book.update({
+      where: { id },
+      data,
+      include: { genre: true },
+    });
   }
 
-  async delete(id: string): Promise<Book> {
-    return prisma.book.delete({ where: { id } });
+  async delete(id: string): Promise<BookWithGenre> {
+    return prisma.book.delete({
+      where: { id },
+      include: { genre: true },
+    });
   }
 }
