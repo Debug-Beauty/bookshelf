@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Input } from "../components/ui/input";
 import { Book, ReadingStatus, READING_STATUS } from "../lib/types";
@@ -8,6 +7,7 @@ import BookCard from "./BookCard";
 
 interface MyLibraryProps {
     library: Book[];
+    allGenres: string[];
     onRemoveFromLibrary: (bookId: string) => void;
     onUpdateBookStatus: (bookId: string, newStatus: ReadingStatus) => void;
     onBookUpdate: (updatedBook: Book) => void;
@@ -42,6 +42,7 @@ const BookGrid = ({
 
 const MyLibrary = ({
     library,
+    allGenres, 
     onRemoveFromLibrary,
     onUpdateBookStatus,
     onBookUpdate,
@@ -50,14 +51,6 @@ const MyLibrary = ({
     onFilterChange
 }: MyLibraryProps) => {
     
-    const availableGenres = useMemo(() => {
-        const genres = new Set(
-            library
-                .map((book) => book.genre?.name) 
-                .filter((genreName): genreName is string => !!genreName)
-        );
-        return Array.from(genres).sort();
-    }, [library]);
 
     const statusOrder: ReadingStatus[] = [
         READING_STATUS.LENDO,
@@ -96,7 +89,7 @@ const MyLibrary = ({
                     className="flex-grow bg-background border border-input rounded-md px-3 py-2 text-sm h-10"
                 >
                     <option value="">Todos os Gêneros</option>
-                    {availableGenres.map((genre) => (
+                    {allGenres.map((genre) => (
                         <option
                             key={`genre-${genre}`}
                             value={genre}

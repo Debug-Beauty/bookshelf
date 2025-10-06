@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import ReadingGoal from './ReadingGoal';
 import MyLibrary from './MyLibrary';
@@ -35,7 +35,7 @@ export default function HomeDashboard({ books: initialBooks }: { books: Book[] }
     } else {
       params.delete(key);
     }
-    router.replace(`${pathname}?${params.toString()}`);
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   const handleRemoveFromLibrary = async (bookId: string) => {
@@ -61,7 +61,6 @@ export default function HomeDashboard({ books: initialBooks }: { books: Book[] }
         }
       }
     });
-  
     formData.append('coverUrl', updatedBook.cover);
 
     await updateBookAction(updatedBook.id, formData);
@@ -74,11 +73,20 @@ export default function HomeDashboard({ books: initialBooks }: { books: Book[] }
     setIsSelectBookModalOpen(false);
   };
 
+  const allGenres = useMemo(() => {
+    const genres = new Set(
+        books
+            .map((book) => book.genre?.name)
+            .filter((genreName): genreName is string => !!genreName)
+    );
+    return Array.from(genres).sort();
+  }, [books]);
+
   const booksToSelect = books.filter(book => book.status === READING_STATUS.QUERO_LER);
   
   const filteredBooks = books.filter(book =>
     (book.title.toLowerCase().includes(searchTerm.toLowerCase()) || book.author.toLowerCase().includes(searchTerm.toLowerCase())) &&
-    (selectedGenre === "" || book.genre?.name === selectedGenre) // Compara com book.genre.name
+    (selectedGenre === "" || book.genre?.name === selectedGenre)
   );
 
   return (
@@ -100,6 +108,7 @@ export default function HomeDashboard({ books: initialBooks }: { books: Book[] }
     
         <MyLibrary
           library={filteredBooks}
+          allGenres={allGenres}
           onRemoveFromLibrary={handleRemoveFromLibrary}
           onUpdateBookStatus={handleUpdateBookStatus}
           onBookUpdate={handleBookUpdate}          

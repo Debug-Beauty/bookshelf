@@ -10,7 +10,6 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 
 interface ConfirmationModalProps {
   isOpen: boolean;
@@ -30,16 +29,8 @@ const ConfirmationModal = ({
   const handleConfirm = async () => {
     try {
       await onConfirm();
-
-      // 🔔 Toast destrutivo (exclusão)
-      toast.error("Livro excluído", {
-        description: "O livro foi removido da sua biblioteca.",
-      });
-    } catch {
-      // 🔔 Toast de erro (falha na exclusão)
-      toast.error("Erro ao excluir", {
-        description: "Não foi possível concluir a exclusão. Tente novamente.",
-      });
+    } catch (e) {
+      console.error("Falha na confirmação:", e);
     } finally {
       onOpenChange(false);
     }

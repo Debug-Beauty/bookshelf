@@ -1,6 +1,8 @@
 "use client";
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; 
+import { toast } from 'sonner';
 import { registerUser, RegisterState } from './actions';
 import { validateEmail, validateConfirmPassword, checkPasswordStrength } from '@/lib/validators';
 import Link from 'next/link';
@@ -17,7 +19,8 @@ const initialPasswordCriteria = {
 };
 
 export default function RegisterPage() {
-  const initialState: RegisterState = { message: '' };
+  const router = useRouter(); 
+  const initialState: RegisterState = { message: '', success: false };
   const [serverState, formAction] = useActionState(registerUser, initialState);
 
   const [formData, setFormData] = useState({
@@ -32,6 +35,17 @@ export default function RegisterPage() {
   });
 
   const [passwordCriteria, setPasswordCriteria] = useState(initialPasswordCriteria);
+  
+  useEffect(() => {
+    if (serverState?.success) {
+      toast.success("Cadastro realizado com sucesso!", {
+        description: "Você será redirecionado para a página de login.",
+      });
+      setTimeout(() => {
+        router.push('/login');
+      }, 2000);
+    }
+  }, [serverState, router]);
 
   const handleValidation = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

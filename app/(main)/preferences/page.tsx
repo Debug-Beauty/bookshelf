@@ -8,6 +8,7 @@ import { ShieldAlert } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { deleteAccountAction } from './actions';
 
 const DeleteAccountModal = ({ isOpen, onClose, onConfirm }: { isOpen: boolean; onClose: () => void; onConfirm: () => void; }) => {
     if (!isOpen) return null;
@@ -40,6 +41,8 @@ const DeleteAccountModal = ({ isOpen, onClose, onConfirm }: { isOpen: boolean; o
 export default function PreferenciasPage() {
     const router = useRouter();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const userEmail = "test@test.com";
+
     const [email, setEmail] = useState('');
     const [confirmEmailPassword, setConfirmEmailPassword] = useState('');
     const [currentPassword, setCurrentPassword] = useState('');
@@ -48,42 +51,28 @@ export default function PreferenciasPage() {
 
     const handleEmailChange = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!email || !confirmEmailPassword) {
-            toast.error("Por favor, preencha todos os campos para alterar o e-mail.");
-            return;
-        }
-        console.log("Alterando e-mail para:", { email, confirmEmailPassword });
         toast.success("E-mail alterado com sucesso!");
-        setEmail('');
-        setConfirmEmailPassword('');
     };
 
     const handlePasswordChange = (e: React.FormEvent) => {
         e.preventDefault();
-        const validationError = validateChangePasswordForm({ currentPassword, newPassword, confirmNewPassword });
-
-        if (validationError) {
-            toast.error(validationError.message);
-            return;
-        }
-
-        console.log("Validação OK. Alterando senha...");
         toast.success("Senha alterada com sucesso!");
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmNewPassword('');
     };
     
-    const confirmDeleteAccount = () => {
-        console.log("Excluindo conta...");
-        toast.success("Sua conta foi excluída com sucesso.");
-        
-        localStorage.removeItem('bookshelf_isLoggedIn');
-        setIsModalOpen(false); 
+    const confirmDeleteAccount = async () => {
+        const result = await deleteAccountAction(userEmail);
 
-        setTimeout(() => {
-            router.push('/login');
-        }, 1500);
+        if (result.error) {
+            toast.error("Erro ao excluir conta", { description: result.error });
+        } else {
+            toast.success("Sua conta foi excluída com sucesso.");
+            localStorage.removeItem('bookshelf_isLoggedIn');
+            setIsModalOpen(false); 
+
+            setTimeout(() => {
+                router.push('/login');
+            }, 1500);
+        }
     };
 
     return (
@@ -109,7 +98,6 @@ export default function PreferenciasPage() {
                         </div>
                     </form>
                 </div>
-
                 <div className="bg-card rounded-lg shadow-md p-6 mb-8 border">
                     <h2 className="text-xl font-semibold mb-4 text-foreground">Alterar Senha</h2>
                     <form onSubmit={handlePasswordChange} className="space-y-4">
