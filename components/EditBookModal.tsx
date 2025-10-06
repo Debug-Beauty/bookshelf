@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -15,6 +15,13 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Book, ReadingStatus, READING_STATUS } from '@/lib/types';
 import { toast } from 'sonner';
+
+const Textarea = (props: React.ComponentProps<"textarea">) => (
+  <textarea
+    className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+    {...props}
+  />
+);
 
 interface EditBookModalProps {
   isOpen: boolean;
@@ -33,78 +40,114 @@ const availableGenres = [
 const readingStatuses = Object.values(READING_STATUS);
 
 const EditBookModal = ({ isOpen, onOpenChange, bookToEdit, onBookUpdate }: EditBookModalProps) => {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [cover, setCover] = useState('');
-  const [genre, setGenre] = useState('');
-  const [status, setStatus] = useState<ReadingStatus>('QUERO_LER');
-  const [year, setYear] = useState<number>(0);
-  const [rating, setRating] = useState<number>(0);
+  const [formData, setFormData] = useState({
+    title: '',
+    author: '',
+    coverUrl: '',
+    genre: '',
+    status: 'QUERO_LER' as ReadingStatus,
+    year: '',
+    rating: 0,
+    pages: '',
+    currentPage: '',
+    isbn: '',
+    notes: '',
+  });
 
   useEffect(() => {
     if (bookToEdit) {
-      setTitle(bookToEdit.title);
-      setAuthor(bookToEdit.author);
-      setCover(bookToEdit.cover);
-      setGenre(bookToEdit.genre);
-      setStatus(bookToEdit.status);
-      setYear(bookToEdit.year);
-      setRating(bookToEdit.rating);
+      setFormData({
+        title: bookToEdit.title || '',
+        author: bookToEdit.author || '',
+        coverUrl: bookToEdit.cover || '',
+        genre: bookToEdit.genre?.name || '',
+        status: bookToEdit.status || 'QUERO_LER',
+        year: String(bookToEdit.year || ''),
+        rating: bookToEdit.rating || 0,
+        pages: String(bookToEdit.pages || ''),
+        currentPage: String(bookToEdit.currentPage || ''),
+        isbn: bookToEdit.isbn || '',
+        notes: bookToEdit.notes || '',
+      });
     }
   }, [bookToEdit]);
 
-  const handleSubmit = () => {
-    if (!title || !author || !bookToEdit) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSelectChange = (name: 'status' | 'genre') => (value: string) => {
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!formData.title || !formData.author || !bookToEdit) {
       toast.error("Erro de Validação", {
         description: "Os campos Título e Autor são obrigatórios.",
       });
       return;
     }
 
-    const updatedBook: Book = {
+    const updatedBookObject: Book = {
       ...bookToEdit,
-      title,
-      author,
-      cover: cover || '/fallback.png',
-      genre: genre || "Não especificado",
-      status,
-      year,
-      rating,
+      ...formData,
+      cover: formData.coverUrl,
+      year: Number(formData.year) || 0,
+      pages: Number(formData.pages) || 0,
+      currentPage: Number(formData.currentPage) || 0,
+      rating: Number(formData.rating) || 0,
+      genre: { id: bookToEdit.genre?.id || '', name: formData.genre },
     };
 
-    onBookUpdate(updatedBook);
+    onBookUpdate(updatedBookObject);
     onOpenChange(false);
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>Editar Livro</DialogTitle>
           <DialogDescription>
             Altere as informações do livro selecionado.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <form onSubmit={handleSubmit} className="grid gap-4 py-4 max-h-[70vh] overflow-y-auto pr-4">
+          
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="title" className="text-right">Título</Label>
-            <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} className="col-span-3" />
+            <Input id="title" name="title" value={formData.title} onChange={handleChange} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="author" className="text-right">Autor</Label>
-            <Input id="author" value={author} onChange={(e) => setAuthor(e.target.value)} className="col-span-3" />
+            <Input id="author" name="author" value={formData.author} onChange={handleChange} className="col-span-3" />
           </div>
            <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="year" className="text-right">Ano</Label>
-            <Input id="year" type="number" value={year} onChange={(e) => setYear(Number(e.target.value))} className="col-span-3" />
+            <Input id="year" name="year" type="number" value={formData.year} onChange={handleChange} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="cover" className="text-right">URL da Capa</Label>
-            <Input id="cover" placeholder="https://..." value={cover} onChange={(e) => setCover(e.target.value)} className="col-span-3" />
+            <Label htmlFor="coverUrl" className="text-right">URL da Capa</Label>
+            <Input id="coverUrl" name="coverUrl" placeholder="https://..." value={formData.coverUrl} onChange={handleChange} className="col-span-3" />
           </div>
+
+          <div className="grid grid-cols-4 items-start gap-4">
+            <Label htmlFor="notes" className="text-right pt-2">Notas</Label>
+            <Textarea 
+              id="notes" 
+              name="notes" 
+              value={formData.notes} 
+              onChange={handleChange} 
+              className="col-span-3" 
+              rows={4}
+            />
+          </div>
+
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="genre" className="text-right">Gênero</Label>
-            <Select value={genre} onValueChange={(value) => setGenre(value)}>
+            <Select name="genre" value={formData.genre} onValueChange={handleSelectChange('genre')}>
                 <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Selecione um gênero" />
                 </SelectTrigger>
@@ -115,7 +158,7 @@ const EditBookModal = ({ isOpen, onOpenChange, bookToEdit, onBookUpdate }: EditB
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="status" className="text-right">Status</Label>
-            <Select value={status} onValueChange={(value: ReadingStatus) => setStatus(value)}>
+            <Select name="status" value={formData.status} onValueChange={handleSelectChange('status')}>
                 <SelectTrigger className="col-span-3">
                     <SelectValue placeholder="Selecione um status" />
                 </SelectTrigger>
@@ -124,10 +167,11 @@ const EditBookModal = ({ isOpen, onOpenChange, bookToEdit, onBookUpdate }: EditB
                 </SelectContent>
             </Select>
           </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit" onClick={handleSubmit}>Salvar Alterações</Button>
-        </DialogFooter>
+          
+          <DialogFooter>
+            <Button type="submit">Salvar Alterações</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

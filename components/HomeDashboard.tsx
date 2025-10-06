@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import ReadingGoal from './ReadingGoal';
 import MyLibrary from './MyLibrary';
@@ -12,13 +12,18 @@ import { Book, ReadingStatus, READING_STATUS } from '../lib/types';
 import { toast } from "sonner";
 import { removeBookAction, updateBookStatusAction, updateBookAction } from '@/app/actions';
 
-export default function HomeDashboard({ books }: { books: Book[] }) {
+export default function HomeDashboard({ books: initialBooks }: { books: Book[] }) {
+  const [books, setBooks] = useState<Book[]>(initialBooks);
   const [isAddBookModalOpen, setIsAddBookModalOpen] = useState(false);
   const [isSelectBookModalOpen, setIsSelectBookModalOpen] = useState(false);  
 
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    setBooks(initialBooks);
+  }, [initialBooks]);
 
   const searchTerm = searchParams.get('search') || "";
   const selectedGenre = searchParams.get('genre') || "";
@@ -35,25 +40,46 @@ export default function HomeDashboard({ books }: { books: Book[] }) {
 
   const handleRemoveFromLibrary = async (bookId: string) => {
     await removeBookAction(bookId);
+    setBooks(prevBooks => prevBooks.filter(book => book.id !== bookId));
     toast.info("Livro removido.");
   };
 
   const handleUpdateBookStatus = async (bookId: string, newStatus: ReadingStatus) => {
     await updateBookStatusAction(bookId, newStatus);
+    setBooks(prevBooks => prevBooks.map(book => book.id === bookId ? { ...book, status: newStatus } : book));
     toast.success("Status atualizado!");
   };
 
   const handleBookUpdate = async (updatedBook: Book) => {
-    await updateBookAction(updatedBook);
+    const formData = new FormData();
+    Object.entries(updatedBook).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        if (key === 'genre' && typeof value === 'object' && value.name) {
+          formData.append('genre', value.name);
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    });
+  
+    formData.append('coverUrl', updatedBook.cover);
+
+    await updateBookAction(updatedBook.id, formData);
+    setBooks(prevBooks => prevBooks.map(book => book.id === updatedBook.id ? updatedBook : book));
     toast.success("Livro atualizado com sucesso!");
   };
-
+  
   const handleSelectBookToRead = (bookId: string) => {
     handleUpdateBookStatus(bookId, READING_STATUS.LENDO);
     setIsSelectBookModalOpen(false);
   };
 
   const booksToSelect = books.filter(book => book.status === READING_STATUS.QUERO_LER);
+  
+  const filteredBooks = books.filter(book =>
+    (book.title.toLowerCase().includes(searchTerm.toLowerCase()) || book.author.toLowerCase().includes(searchTerm.toLowerCase())) &&
+    (selectedGenre === "" || book.genre?.name === selectedGenre) // Compara com book.genre.name
+  );
 
   return (
     <>
@@ -73,7 +99,7 @@ export default function HomeDashboard({ books }: { books: Book[] }) {
         </div>        
     
         <MyLibrary
-          library={books}
+          library={filteredBooks}
           onRemoveFromLibrary={handleRemoveFromLibrary}
           onUpdateBookStatus={handleUpdateBookStatus}
           onBookUpdate={handleBookUpdate}          

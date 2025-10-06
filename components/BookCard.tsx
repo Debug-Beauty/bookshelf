@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
@@ -18,6 +18,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { updateBookStatusAction, updateBookRatingAction } from "@/app/actions";
 
 const LOCAL_FALLBACK_SRC = "/fallback.png";
 
@@ -72,27 +73,30 @@ const StarRating = ({ currentRating, onRatingChange }: { currentRating: number, 
         </div>
     );
 };
+
 interface BookCardProps {
   book: Book;
   onRemoveFromLibrary: (bookId: string) => void;
-  onUpdateBookStatus: (bookId: string, newStatus: ReadingStatus) => void;
+  onUpdateBookStatus: (bookId: string, newStatus: ReadingStatus) => void; // Propriedade adicionada de volta
   onBookUpdate: (updatedBook: Book) => void;
 }
+
 
 const BookCard = ({
   book,
   onRemoveFromLibrary,
-  onUpdateBookStatus,
+  onUpdateBookStatus, 
   onBookUpdate,
 }: BookCardProps) => {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [coverSrc, setCoverSrc] = useState(book.cover);
 
-  const [coverSrc, setCoverSrc] = React.useState(book.cover);
   const handleError = () => {
     if (coverSrc !== LOCAL_FALLBACK_SRC) setCoverSrc(LOCAL_FALLBACK_SRC);
   };
-  React.useEffect(() => {
+  
+  useEffect(() => {
     setCoverSrc(book.cover);
   }, [book.cover]);
 
@@ -107,20 +111,20 @@ const BookCard = ({
  
   const handleChangeStatus = (newStatus: ReadingStatus) => {
     onUpdateBookStatus(book.id, newStatus);
-    toast.success("Status atualizado", {
-      description: `“${book.title}” agora está marcado como ${formatStatus(
-        newStatus
-      )}.`,
-    });
   };
 
-  const handleRatingChange = (newRating: number) => {
-    const updatedBook = { ...book, rating: newRating };
-    onBookUpdate(updatedBook);
+  const handleRatingChange = async (newRating: number) => {
+    const result = await updateBookRatingAction(book.id, newRating);
+
+    if (result?.error) {
+      toast.error(result.error);
+    } else {
+      toast.success("Avaliação atualizada!");
+    }
   };
 
   const statusClass = statusColorMap[book.status] || "bg-slate-500";
-  const genreClass = genreColorMap[book.genre] || "bg-slate-700";
+  const genreClass = book.genre?.name ? (genreColorMap[book.genre.name] || "bg-slate-700") : "bg-slate-700";
 
   return (
     <>
@@ -143,12 +147,13 @@ const BookCard = ({
         <div>
           <div className="relative aspect-[2/3] w-full">
             <Image
-              src={book.cover}
+              src={coverSrc}
               alt={`Capa do livro ${book.title}`}
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover"
               priority
+              onError={handleError}
             />
           </div>
 
@@ -171,9 +176,7 @@ const BookCard = ({
             </p>
 
             <div className="mt-2 flex flex-wrap gap-2">
-              <Badge className={`${genreClass} text-white`}>
-                {typeof book.genre === "object" ? book.genre.name : book.genre}
-              </Badge>
+              {book.genre?.name && <Badge className={`${genreClass} text-white`}>{book.genre.name}</Badge>}
             </div>
           </CardContent>
         </div>

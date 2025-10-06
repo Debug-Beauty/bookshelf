@@ -51,17 +51,13 @@ const MyLibrary = ({
 }: MyLibraryProps) => {
     
     const availableGenres = useMemo(() => {
-    const genres = new Set(
-        library
-            .map((book) => 
-                typeof book.genre === "string"   
-                    ? book.genre.trim()            
-                    : ""                             
-            )
-            .filter((genre) => genre.length > 0)     
-    );
-    return Array.from(genres).sort();
-}, [library]);
+        const genres = new Set(
+            library
+                .map((book) => book.genre?.name) 
+                .filter((genreName): genreName is string => !!genreName)
+        );
+        return Array.from(genres).sort();
+    }, [library]);
 
     const statusOrder: ReadingStatus[] = [
         READING_STATUS.LENDO,
@@ -86,7 +82,6 @@ const MyLibrary = ({
                 Minha Biblioteca
             </h2>
 
-            {/* Filtros */}
             <div className="flex flex-col sm:flex-row gap-4 mb-6">
                 <Input
                     type="text"
@@ -112,7 +107,6 @@ const MyLibrary = ({
                 </select>
             </div>
 
-            {/* Tabs de Status */}
             <Tabs defaultValue="TODOS" className="w-full">
                 <TabsList className="grid w-full bg-card grid-cols-3 sm:grid-cols-3 md:grid-cols-6">
                     {allTabs.map((tab) => (

@@ -1,9 +1,8 @@
 "use server";
 
 import { revalidatePath } from 'next/cache';
-import { addBook, removeBook, updateBook, updateBookStatus, getBookById } from '../lib/data';
-import { Book, ReadingStatus } from '../lib/types';
 import prisma from "../lib/prisma";
+import { ReadingStatus } from '@/lib/types';
 
 export async function addBookAction(formData: FormData) {
     const title = formData.get('title') as string;
@@ -11,25 +10,27 @@ export async function addBookAction(formData: FormData) {
 
     if (!title || !author) {
         console.error("Título e Autor são obrigatórios.");       
-        return;
+        return { error: "Título e Autor são obrigatórios." };
     }
 
-    const newBook = await prisma.book.create({
+    const genreName = formData.get('genre') as string || "Não especificado";
+
+    await prisma.book.create({
         data: {
             title,
             author,
             cover: formData.get('coverUrl') as string || "/fallback.png",
             genre: {
                 connectOrCreate: {
-                    where: { name: formData.get('genre') as string || "Não especificado" },
-                    create: { name: formData.get('genre') as string || "Não especificado" }
+                    where: { name: genreName },
+                    create: { name: genreName }
                 }
             },
             status: (formData.get('status') as ReadingStatus) || "QUERO_LER",
             year: Number(formData.get('year')) || null,
             pages: Number(formData.get('pages')) || null,
-            synopsis: formData.get('synopsis') as string || "Nenhuma sinopse adicionada.",
-            rating: 0,
+            synopsis: formData.get('synopsis') as string || null,
+            rating: Number(formData.get('rating')) || 0,
             currentPage: Number(formData.get('currentPage')) || 0,
             isbn: formData.get('isbn') as string || null,
             notes: formData.get('notes') as string || null,
@@ -43,65 +44,70 @@ export async function removeBookAction(id: string) {
   await prisma.book.delete({
     where: { id },
   });
-
   revalidatePath('/');
 }
-
 
 export async function updateBookStatusAction(id: string, newStatus: ReadingStatus) {
   await prisma.book.update({
     where: { id },
-    data: {
-      status: newStatus,
-      updatedAt: new Date(),
-    },
+    data: { status: newStatus },
   });
-
   revalidatePath('/');
   revalidatePath(`/book/${id}`);
 }
-
-
-export async function getBookByIdAction(id: string) {
-  return prisma.book.findUnique({
-    where: { id },
-    include: { genre: true },
-  });
-}
-
 
 export async function updateBookAction(id: string, formData: FormData) {
   const title = formData.get('title') as string;
   const author = formData.get('author') as string;
+  const coverUrl = formData.get('coverUrl') as string;
+  const genreName = formData.get('genre') as string || "Não especificado";
 
   if (!title || !author) {
     console.error("Título e Autor são obrigatórios.");
-    return;
+    return { error: "Título e Autor são obrigatórios." };
+  }
+
+  const dataToUpdate: any = {
+    title,
+    author,
+    genre: {
+      connectOrCreate: {
+        where: { name: genreName },
+        create: { name: genreName },
+      },
+    },
+    status: (formData.get('status') as ReadingStatus) || "QUERO_LER",
+    year: Number(formData.get('year')) || null,
+    pages: Number(formData.get('pages')) || null,
+    synopsis: formData.get('synopsis') as string || null,
+    currentPage: Number(formData.get('currentPage')) || 0,
+    isbn: formData.get('isbn') as string || null,
+    notes: formData.get('notes') as string || null,
+  };
+
+  if (coverUrl) {
+    dataToUpdate.cover = coverUrl;
   }
 
   await prisma.book.update({
     where: { id },
-    data: {
-      title,
-      author,
-      cover: formData.get('coverUrl') as string || "/fallback.png",
-      genre: {
-        connectOrCreate: {
-          where: { name: formData.get('genre') as string || "Não especificado" },
-          create: { name: formData.get('genre') as string || "Não especificado" }
-        }
-      },
-      status: (formData.get('status') as ReadingStatus) || "QUERO_LER",
-      year: Number(formData.get('year')) || null,
-      pages: Number(formData.get('pages')) || null,
-      synopsis: formData.get('synopsis') as string || "Nenhuma sinopse adicionada.",
-      currentPage: Number(formData.get('currentPage')) || 0,
-      isbn: formData.get('isbn') as string || null,
-      notes: formData.get('notes') as string || null,
-      updatedAt: new Date(),
-    },
+    data: dataToUpdate,
   });
 
   revalidatePath('/');
   revalidatePath(`/book/${id}`);
+}
+
+export async function updateBookRatingAction(bookId: string, newRating: number) {
+  try {
+    await prisma.book.update({
+      where: { id: bookId },
+      data: { rating: newRating },
+    });
+    revalidatePath('/');
+    revalidatePath(`/book/${bookId}`);
+  } catch (error) {
+    console.error("Falha ao atualizar a avaliação:", error);
+    return { error: "Não foi possível atualizar a avaliação." };
+  }
 }

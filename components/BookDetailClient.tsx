@@ -14,20 +14,32 @@ import Breadcrumbs from "@/components/Breadcrumbs";
 import ConfirmationModal from "@/components/ConfirmationModal";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { toast } from "sonner";
-import { BookClientProps } from "./interface/IBookClientProps";
 
 const LOCAL_FALLBACK_SRC = "/fallback.png";
 
-export default function BookDetailClient({ initialBook }: BookClientProps) {
+export default function BookDetailClient({ initialBook }: { initialBook: Book }) {
   const router = useRouter();
   const [book, setBook] = useState<Book>(initialBook);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   const handleBookUpdate = async (updatedBook: Book) => {
+    const formData = new FormData();
+
+    Object.entries(updatedBook).forEach(([key, value]) => {
+      if (value !== null && value !== undefined) {
+        if (key === 'genre' && typeof value === 'object') {
+          formData.append('genre', value.name); 
+        } else {
+          formData.append(key, String(value));
+        }
+      }
+    });
+
+    await updateBookAction(updatedBook.id, formData);
+    
     setBook(updatedBook); 
     setIsEditModalOpen(false);
-    await updateBookAction(updatedBook);
     toast.success("Livro atualizado!");
   };
 
@@ -47,7 +59,7 @@ export default function BookDetailClient({ initialBook }: BookClientProps) {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
       stars.push(
-        <span key={i} className={i <= book.rating ? "text-yellow-400" : "text-gray-300"}>
+        <span key={i} className={i <= (book.rating || 0) ? "text-yellow-400" : "text-gray-300"}>
           ★
         </span>
       );
@@ -118,7 +130,7 @@ export default function BookDetailClient({ initialBook }: BookClientProps) {
                 <h1 className="text-4xl font-bold text-primary mb-2">{book.title}</h1>
                 <h2 className="text-xl text-muted-foreground mb-4">{book.author} ({book.year})</h2>
                 <div className="flex items-center gap-4 mb-4">
-                  <Badge>{book.genre.name}</Badge>
+                  {book.genre?.name && <Badge>{book.genre.name}</Badge>}
                   <div className="flex items-center">{renderStars()}</div>
                 </div>
               </div>
@@ -143,6 +155,15 @@ export default function BookDetailClient({ initialBook }: BookClientProps) {
                 {book.synopsis || "Sinopse não disponível."}
               </p>
             </div>
+
+            {book.notes && (
+              <div className="mt-6">
+                <h3 className="text-2xl font-semibold text-primary mb-2">Notas Pessoais</h3>
+                <p className="text-base text-foreground/80 leading-relaxed whitespace-pre-wrap bg-card p-4 rounded-md border">
+                  {book.notes}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>
