@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "./components/ThemeProvider"; 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
