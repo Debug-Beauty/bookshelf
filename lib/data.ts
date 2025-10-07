@@ -5,10 +5,13 @@ import { BookClientProps } from '@/components/interface/IBookClientProps';
 
 const bookRepo = new BookRepository();
 
-export type BookWithGenre = PrismaBook & { genre: Genre };
+export type BookWithGenre = PrismaBook & { genre: Genre | null };
 
 
-export const getBooks = async (searchTerm?: string, genre?: string): Promise<PrismaBook[]> => {
+export const getBooks = async (
+  searchTerm?: string,
+  genre?: string
+): Promise<BookWithGenre[]> => {
   let books = await bookRepo.findAll();
 
   if (searchTerm) {
