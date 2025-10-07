@@ -1,9 +1,9 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { BookRepository } from '@/lib/repositories/BookRepository';
 
 const bookRepo = new BookRepository();
 
-export async function GET() {
+export async function GET(_request: NextRequest) {
   try {
     const books = await bookRepo.findAll();
     return NextResponse.json(books);
@@ -13,7 +13,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
 

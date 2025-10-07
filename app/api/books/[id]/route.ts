@@ -1,13 +1,13 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { BookRepository } from '@/lib/repositories/BookRepository';
 
 const bookRepo = new BookRepository();
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }  
 ) {
-  const { id } = params;
+  const { id } = await context.params;           
   try {
     const book = await bookRepo.findById(id);
     if (!book) {
@@ -21,10 +21,10 @@ export async function GET(
 }
 
 export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await context.params;           
   try {
     const data = await request.json();
 
@@ -52,10 +52,10 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await context.params;           
   try {
     await bookRepo.delete(id);
     return NextResponse.json({ message: 'Livro removido com sucesso' });
