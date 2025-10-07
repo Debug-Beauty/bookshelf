@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { genres } from '@/lib/inMemoryStore'; 
+import { GenreRepository } from '@/lib/repositories/GenreRepository';
+
+const genreRepo = new GenreRepository();
 
 export async function POST(request: Request) {
   try {
@@ -9,12 +11,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'O nome do género é obrigatório.' }, { status: 400 });
     }
 
-    if (genres.some(g => g.toLowerCase() === genre.toLowerCase())) {
+    const genreExist = await genreRepo.findByName(genre);
+
+    if (genreExist?.name || genreExist?.name.toLowerCase()) {
       return NextResponse.json({ error: 'Este género já existe.' }, { status: 409 });
     }
 
-    genres.push(genre);
-    genres.sort();
+    await genreRepo.create(genre);
 
     return NextResponse.json({ message: 'Gênero adicionado com sucesso', genre }, { status: 201 });
   } catch (error) {
