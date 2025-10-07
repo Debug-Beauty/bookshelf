@@ -26,16 +26,17 @@ export const getBooks = async (
     books = books.filter((book) => book.genre?.name === genre);
   }
 
-  return books.map((b): BookWithGenre => ({
+
+  return books.map((b) => ({
     ...b,
-    synopsis: b.synopsis ?? '',          
-    cover: b.cover ?? '',                 
-    notes: b.notes ?? '',               
-    genre: b.genre ?? { id: '', name: 'Sem gênero' }
+    synopsis: b.synopsis ?? '',
+    cover: b.cover ?? '/fallback.png',
+    notes: b.notes ?? '',
+    genre: b.genre ?? { id: '', name: 'Sem gênero' },
   }));
 };
 
-export const addBook = async (newBook: Prisma.BookCreateInput): Promise<PrismaBook> => {
+export const addBook = async (newBook: Prisma.BookCreateInput): Promise<BookWithGenre> => {
   return await bookRepo.create(newBook);
 };
 
@@ -43,11 +44,17 @@ export const removeBook = async (bookId: string): Promise<void> => {
   await bookRepo.delete(bookId);
 };
 
-export const updateBookStatus = async (bookId: string, newStatus: ReadingStatus): Promise<void> => {
+
+export const updateBookStatus = async (
+  bookId: string,
+  newStatus: ReadingStatus
+): Promise<void> => {
   await bookRepo.update(bookId, { status: newStatus });
 };
 
-export const getBookById = async (id: string): Promise<BookClientProps['initialBook'] | null> => {
+export const getBookById = async (
+  id: string
+): Promise<BookClientProps['initialBook'] | null> => {
   const book = await bookRepo.findById(id);
   if (!book) return null;
 
@@ -63,12 +70,14 @@ export const getBookById = async (id: string): Promise<BookClientProps['initialB
     cover: book.cover ?? '/fallback.png',
     status: book.status,
     currentPage: book.currentPage ?? 0,
-    isbn: book.isbn ?? undefined,
-    notes: book.notes ?? undefined,
+    isbn: book.isbn ?? '',
+    notes: book.notes ?? '',
   };
 };
 
-export const updateBook = async (updatedBook: Prisma.BookUpdateInput & { id: string }): Promise<PrismaBook> => {
+export const updateBook = async (
+  updatedBook: Prisma.BookUpdateInput & { id: string }
+): Promise<BookWithGenre> => {
   const { id, ...data } = updatedBook;
   return await bookRepo.update(id, data);
 };
