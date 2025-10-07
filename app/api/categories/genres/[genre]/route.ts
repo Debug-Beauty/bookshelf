@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
-import { genres } from '@/lib/inMemoryStore'; 
+import { GenreRepository } from '@/lib/repositories/GenreRepository';
+
+const genreRepo = new GenreRepository();
 
 export async function DELETE(
   request: Request,
@@ -8,18 +10,16 @@ export async function DELETE(
   try {
     const genreToDelete = decodeURIComponent(params.genre);
 
-    const genreIndex = genres.findIndex(
-      (g) => g.toLowerCase() === genreToDelete.toLowerCase()
-    );
+    const genreIndex = await genreRepo.findById(genreToDelete);
 
-    if (genreIndex === -1) {
+    if (!genreIndex) {
       return NextResponse.json(
         { error: 'Gênero não encontrado.' },
         { status: 404 }
       );
     }
 
-    genres.splice(genreIndex, 1);
+    await genreRepo.delete(genreIndex.id);
 
     return NextResponse.json({ message: `Gênero '${genreToDelete}' removido com sucesso.` });
 
