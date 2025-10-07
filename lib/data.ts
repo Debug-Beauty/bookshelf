@@ -11,7 +11,7 @@ export type BookWithGenre = PrismaBook & { genre: Genre | null };
 export const getBooks = async (
   searchTerm?: string,
   genre?: string
-): Promise<PrismaBook[]> => {
+): Promise<BookWithGenre[]> => {
   let books = await bookRepo.findAll();
 
   if (searchTerm) {
@@ -26,7 +26,7 @@ export const getBooks = async (
     books = books.filter((book) => book.genre?.name === genre);
   }
 
-  return books.map((b) => ({
+  return books.map((b): BookWithGenre => ({
     ...b,
     synopsis: b.synopsis ?? '',          
     cover: b.cover ?? '',                 
