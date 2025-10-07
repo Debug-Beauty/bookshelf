@@ -6,8 +6,6 @@ import { Book } from './types';
 
 const bookRepo = new BookRepository();
 
-export type BookWithGenre = PrismaBook & { genre: Genre | null };
-
 export const getBooks = async (
   searchTerm?: string,
   genre?: string

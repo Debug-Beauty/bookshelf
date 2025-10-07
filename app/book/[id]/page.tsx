@@ -1,4 +1,4 @@
-import { getBookById, BookWithGenre } from "@/lib/data";
+import { getBookById } from "@/lib/data";
 import { notFound } from "next/navigation";
 import BookDetailClient from "@/components/BookDetailClient";
 
@@ -16,6 +16,7 @@ export default async function BookDetailPage({ params }: BookDetailPageProps) {
   if (!book) {
     notFound();
   }
+
 
   const initialBook = {
     ...book,
